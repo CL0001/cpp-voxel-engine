@@ -1,3 +1,9 @@
 .vs/
+out/
+
+.idea/
+cmake-build-debug/
+
 build/
+
 __pycache__/

@@ -14,12 +14,16 @@ add_subdirectory(vendor/glad)
 add_subdirectory(vendor/glfw)
 add_subdirectory(vendor/imgui)
 
-set(
-    PROJECT_SOURCES
-    source/main.cpp
-)
+add_executable(${PROJECT_NAME} "")
 
-add_executable(${PROJECT_NAME} ${PROJECT_SOURCES})
+target_sources(${PROJECT_NAME}
+    PRIVATE
+    source/main.cpp
+    source/shader.cpp
+
+    PUBLIC
+    include/shader.h
+)
 
 target_include_directories(${PROJECT_NAME} PRIVATE include)
 
@@ -32,3 +36,5 @@ elseif (APPLE)
 else()
     target_link_libraries(${PROJECT_NAME} PRIVATE GL)
 endif()
+
+target_compile_definitions(${PROJECT_NAME} PRIVATE ASSETS_PATH="${CMAKE_SOURCE_DIR}/assets/")
