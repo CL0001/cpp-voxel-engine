@@ -1,11 +1,10 @@
 #include "shader.h"
 
 #include <fstream>
-#include <functional>
-#include <iostream>
 #include <sstream>
 
 #include "glad/glad.h"
+#include "spdlog/spdlog.h"
 
 Shader::Shader(const std::string& vertex_shader_path, const std::string& fragment_shader_path)
 {
@@ -22,11 +21,11 @@ Shader::Shader(const std::string& vertex_shader_path, const std::string& fragmen
 
     GLint link_success;
     glGetProgramiv(program_id_, GL_LINK_STATUS, &link_success);
-    if (!link_success) {
+    if (!link_success)
+    {
         char info_log[512];
         glGetProgramInfoLog(program_id_, 512, nullptr, info_log);
-        std::cerr << "[ERROR] Shader program linking failed\n"
-                  << info_log << std::endl;
+        spdlog::error("shader program linking failed: {}", info_log);
     }
 
     glDeleteShader(vertex_shader);
@@ -48,8 +47,8 @@ std::string Shader::LoadShaderSource(const std::string& shader_path, const std::
     std::ifstream file(shader_path);
     if (!file.is_open())
     {
-        std::cerr << "[ERROR][" << shader_tag << "] Cannot open shader source file\n"
-                  << "  |> Path: " << shader_path << std::endl;
+        spdlog::error("[{}] cannot open shader source file: {}", shader_tag, shader_path);
+
         return {};
     }
 
@@ -58,7 +57,7 @@ std::string Shader::LoadShaderSource(const std::string& shader_path, const std::
     std::string source = buffer.str();
 
     if (source.empty())
-        std::cerr << "[ERROR][" << shader_tag << "] Shader source is empty" << std::endl;
+        spdlog::error("[{}] shader source is empty: {}", shader_tag, shader_path);
 
     return source;
 }
@@ -67,16 +66,17 @@ unsigned int Shader::CompileShader(GLenum type, const std::string& source, const
 {
     const unsigned int shader = glCreateShader(type);
     const char* src = source.c_str();
+
     glShaderSource(shader, 1, &src, nullptr);
     glCompileShader(shader);
 
     GLint success;
     glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
-    if (!success) {
+    if (!success)
+    {
         char info_log[512];
         glGetShaderInfoLog(shader, 512, nullptr, info_log);
-        std::cerr << "[ERROR][" << shader_tag << "] Compilation failed\n"
-                  << info_log << std::endl;
+        spdlog::error("[{}] cannot compile shader: {}", shader_tag, source);
     }
 
     return shader;
