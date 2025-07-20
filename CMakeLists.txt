@@ -4,7 +4,7 @@ project(
     VoxelEngine
     VERSION 0.1.0
     DESCRIPTION "Voxel Engine with OpenGL"
-    LANGUAGES CXX
+    LANGUAGES C CXX
 )
 
 set(CMAKE_CXX_STANDARD 20)
