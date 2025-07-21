@@ -21,9 +21,11 @@ target_sources(${PROJECT_NAME}
     PRIVATE
     source/main.cpp
     source/shader.cpp
+    source/engine.cpp
 
     PUBLIC
     include/shader.h
+    include/engine.h
 )
 
 target_include_directories(${PROJECT_NAME} PRIVATE include)
