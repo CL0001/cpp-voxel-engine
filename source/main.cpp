@@ -4,14 +4,14 @@
 
 int main()
 {
-	try
-	{
-		const Engine engine(680, 480, "Voxel Engine");
-		engine.Run();
-	}
-	catch (const std::exception& e)
-	{
-		spdlog::critical("Fatal failure: {}", e.what());
-		return EXIT_FAILURE;
-	}
+    try
+    {
+        const Engine engine(680, 480, "Voxel Engine");
+	engine.Run();
+    }
+    catch (const std::exception& e)
+    {
+        spdlog::critical("Fatal failure: {}", e.what());
+	return EXIT_FAILURE;
+    }
 }
