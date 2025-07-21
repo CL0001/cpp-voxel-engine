@@ -6,6 +6,8 @@
 
 #include "shader.h"
 
+#include "cube.h"
+
 Engine::Engine(const int width, const int height, const char* title)
 {
     if (glfwInit() == 0)
@@ -37,12 +39,14 @@ Engine::~Engine()
 
 void Engine::Run() const
 {
+    const Cube cube;
     while (!glfwWindowShouldClose(window_))
     {
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
         shader_->Use();
+        cube.Draw();
 
         glfwSwapBuffers(window_);
         glfwPollEvents();
