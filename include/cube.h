@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CUBE_H
+#define CUBE_H
 
 class Cube
 {
@@ -11,3 +12,5 @@ private:
     unsigned int vbo_;
     unsigned int ebo_;
 };
+
+#endif // CUBE_H

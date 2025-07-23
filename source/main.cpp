@@ -6,7 +6,7 @@ int main()
 {
 	try
 	{
-		const Engine engine(640, 480, "Voxel Engine");
+		Engine engine(640, 480, "Voxel Engine");
 		engine.Run();
 	}
 		catch (const std::exception& e)

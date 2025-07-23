@@ -24,11 +24,13 @@ target_sources(${PROJECT_NAME}
     source/shader.cpp
     source/engine.cpp
     source/cube.cpp
+    source/camera.cpp
 
     PUBLIC
     include/shader.h
     include/engine.h
     include/cube.h
+    include/camera.h
 )
 
 target_include_directories(${PROJECT_NAME} PRIVATE include)
