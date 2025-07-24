@@ -51,7 +51,9 @@ void Engine::Run()
 
     while (!glfwWindowShouldClose(window_))
     {
-        camera_->HandleInput(window_, 0);
+        const double delta_time = CalculateDeltaTime();
+
+        camera_->HandleInput(window_, delta_time);
 
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
@@ -69,4 +71,16 @@ void Engine::FramebufferSizeCallback(GLFWwindow* window, const int width, const 
 {
     spdlog::info("Framebuffer size: {} x {}", width, height);
     glViewport(0, 0, width, height);
+}
+
+double Engine::CalculateDeltaTime()
+{
+    static double last_time = glfwGetTime();
+
+    const double current_time = glfwGetTime();
+    const double delta_time = current_time - last_time;
+
+    last_time = current_time;
+
+    return delta_time;
 }

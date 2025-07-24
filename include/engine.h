@@ -19,6 +19,7 @@ public:
 
 private:
     static void FramebufferSizeCallback(GLFWwindow* window, int width, int height);
+    static double CalculateDeltaTime();
 
     GLFWwindow* window_;
     std::optional<Shader> shader_;

@@ -10,14 +10,14 @@
 #include "glm/gtx/rotate_vector.hpp"
 #include "glm/gtx/vector_angle.hpp"
 
-Camera::Camera(const glm::vec3 position, const int width, const int height)
+Camera::Camera(const glm::vec3 position, const unsigned int width, const unsigned int height)
     : position_(position),
       orientation_(glm::vec3(0.0f, 0.0f, -1.0f)),
       up_(glm::vec3(0.0f, 1.0f, 0.0f)),
       width_(width),
       height_(height),
-      speed_(0.4f),
-      sensitivity_(100.0f),
+      speed_(0.1f),
+      sensitivity_(50.0f),
       first_click_(false)
 {
 }
@@ -31,19 +31,19 @@ void Camera::Matrix(const float fov, const float near_plane, const float far_pla
 }
 
 // TODO: Add delta_time to the engine and use it here.
-void Camera::HandleInput(GLFWwindow* window, float delta_time)
+void Camera::HandleInput(GLFWwindow* window, const double delta_time)
 {
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        position_ += speed_ * orientation_;
+        position_ += speed_ * orientation_ * static_cast<float>(delta_time);
 
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        position_ -= glm::normalize(glm::cross(orientation_, up_)) * speed_;
+        position_ -= glm::normalize(glm::cross(orientation_, up_)) * speed_ * static_cast<float>(delta_time);
 
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        position_ -= speed_ * orientation_;
+        position_ -= speed_ * orientation_ * static_cast<float>(delta_time);
 
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        position_ += glm::normalize(glm::cross(orientation_, up_)) * speed_;
+        position_ += glm::normalize(glm::cross(orientation_, up_)) * speed_ * static_cast<float>(delta_time);
 
     if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
         speed_ = 1.0f;
@@ -56,7 +56,7 @@ void Camera::HandleInput(GLFWwindow* window, float delta_time)
 
         if (first_click_)
         {
-            glfwSetCursorPos(window, width_ / 2, height_ / 2);
+            glfwSetCursorPos(window, width_ / 2.0, height_ / 2.0);
             first_click_ = false;
         }
 
@@ -64,8 +64,8 @@ void Camera::HandleInput(GLFWwindow* window, float delta_time)
         double mouse_y;
         glfwGetCursorPos(window, &mouse_x, &mouse_y);
 
-        const float rotate_x = sensitivity_ * static_cast<float>(mouse_y - height_ / 2) / height_;
-        const float rotate_y = sensitivity_ * static_cast<float>(mouse_x - width_ / 2) / width_;
+        const float rotate_x = sensitivity_ * static_cast<float>(mouse_y - height_ / 2.0) / static_cast<float>(height_);
+        const float rotate_y = sensitivity_ * static_cast<float>(mouse_x - width_ / 2.0) / static_cast<float>(width_);
 
         const glm::vec3 new_orientation = glm::rotate(
             orientation_,
