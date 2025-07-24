@@ -17,29 +17,29 @@ Cube::Cube()
     };
 
     constexpr unsigned int indices[] = {
-        // front face
+        // front face (CCW)
         0, 1, 2,
-        2, 3, 1,
+        1, 3, 2,
 
-        // left face
-        0, 1, 4,
-        4, 5, 1,
+        // left face (CCW)
+        4, 5, 0,
+        5, 1, 0,
 
-        // back face
-        4, 5, 7,
-        7, 6, 5,
+        // back face (CCW)
+        6, 7, 4,
+        7, 5, 4,
 
-        // right face
-        2, 3, 7,
-        7, 6, 3,
+        // right face (CCW)
+        2, 3, 6,
+        3, 7, 6,
 
-        // bottom face
-        0, 4, 2,
-        2, 7, 4,
+        // bottom face (CCW)
+        0, 2, 4,
+        2, 6, 4,
 
-        // top face
+        // top face (CCW)
         1, 5, 3,
-        3, 6, 5
+        5, 7, 3
     };
 
     glGenVertexArrays(1, &vao_);
