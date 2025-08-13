@@ -30,25 +30,36 @@ void Camera::Matrix(const float fov, const float near_plane, const float far_pla
     glUniformMatrix4fv(glGetUniformLocation(shader_program_id, uniform), 1, GL_FALSE, glm::value_ptr(projection * view));
 }
 
-// TODO: Add delta_time to the engine and use it here.
 void Camera::HandleInput(GLFWwindow* window, const double delta_time)
 {
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+    {
         position_ += speed_ * orientation_ * static_cast<float>(delta_time);
+    }
 
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+    {
         position_ -= glm::normalize(glm::cross(orientation_, up_)) * speed_ * static_cast<float>(delta_time);
+    }
 
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+    {
         position_ -= speed_ * orientation_ * static_cast<float>(delta_time);
+    }
 
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+    {
         position_ += glm::normalize(glm::cross(orientation_, up_)) * speed_ * static_cast<float>(delta_time);
+    }
 
     if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+    {
         speed_ = 1.0f;
+    }
     else
+    {
         speed_ = 0.4f;
+    }
 
     if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
     {
@@ -67,17 +78,15 @@ void Camera::HandleInput(GLFWwindow* window, const double delta_time)
         const float rotate_x = sensitivity_ * static_cast<float>(mouse_y - height_ / 2.0) / static_cast<float>(height_);
         const float rotate_y = sensitivity_ * static_cast<float>(mouse_x - width_ / 2.0) / static_cast<float>(width_);
 
-        const glm::vec3 new_orientation = glm::rotate(
-            orientation_,
-            glm::radians(-rotate_x),
-            glm::normalize(glm::cross(orientation_, up_))
-        );
+        const glm::vec3 new_orientation = glm::rotate(orientation_, glm::radians(-rotate_x), glm::normalize(glm::cross(orientation_, up_)));
 
         if (abs(glm::angle(new_orientation, up_) - glm::radians(90.0f)) <= glm::radians(85.0f))
+        {
             orientation_ = new_orientation;
+        }
 
         orientation_ = glm::rotate(orientation_, glm::radians(-rotate_y), up_);
-        glfwSetCursorPos(window, width_ / 2, height_ / 2);
+        glfwSetCursorPos(window, width_ / 2.0, height_ / 2.0);
     }
     else if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_RELEASE)
     {
@@ -85,4 +94,3 @@ void Camera::HandleInput(GLFWwindow* window, const double delta_time)
         first_click_ = true;
     }
 }
-
