@@ -38,6 +38,7 @@ Engine::Engine(const int width, const int height, const char* title)
 
     shader_.emplace(ASSETS_PATH "shaders/base_vertex.glsl", ASSETS_PATH "shaders/base_fragment.glsl");
     camera_.emplace(glm::vec3(0.0f, 0.0f, 0.0f), width, height);
+    world_.emplace();
 }
 
 Engine::~Engine()
@@ -47,7 +48,7 @@ Engine::~Engine()
 
 void Engine::Run()
 {
-    const Cube cube;
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
     while (!glfwWindowShouldClose(window_))
     {
@@ -60,7 +61,7 @@ void Engine::Run()
 
         shader_->Use();
         camera_->Matrix(45.0f, 0.1f, 100.0f, shader_->GetProgramId(), "camera_matrix");
-        cube.Draw();
+        world_->Draw(*shader_);
 
         glfwSwapBuffers(window_);
         glfwPollEvents();

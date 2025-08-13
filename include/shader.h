@@ -4,6 +4,7 @@
 #include <string>
 
 #include "glad/glad.h"
+#include <glm/matrix.hpp>
 
 class Shader
 {
@@ -12,6 +13,8 @@ public:
 	~Shader();
 
 	void Use() const;
+
+	void SetUniform(const std::string& name, const glm::mat4& matrix) const;
 
 	unsigned int GetProgramId() const;
 

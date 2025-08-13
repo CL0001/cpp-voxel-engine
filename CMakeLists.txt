@@ -20,17 +20,21 @@ add_executable(${PROJECT_NAME} "")
 
 target_sources(${PROJECT_NAME}
     PRIVATE
-    source/main.cpp
-    source/shader.cpp
-    source/engine.cpp
-    source/cube.cpp
-    source/camera.cpp
+        source/main.cpp
+        source/engine.cpp
+        source/shader.cpp
+        source/camera.cpp
+        source/cube_mesh.cpp
+        source/cube.cpp
+        source/world.cpp
 
     PUBLIC
-    include/shader.h
-    include/engine.h
-    include/cube.h
-    include/camera.h
+        include/engine.h
+        include/shader.h
+        include/camera.h
+        include/cube_mesh.h
+        include/cube.h
+        include/world.h
 )
 
 target_include_directories(${PROJECT_NAME} PRIVATE include)

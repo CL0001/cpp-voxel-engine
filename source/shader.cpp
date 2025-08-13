@@ -28,6 +28,19 @@ void Shader::Use() const
     glUseProgram(program_id_);
 }
 
+void Shader::SetUniform(const std::string& name, const glm::mat4& matrix) const
+{
+    const int location = glGetUniformLocation(program_id_, name.c_str());
+
+    if (location == -1)
+    {
+        spdlog::warn("Uniform '{}' not found in shader", name);
+        return;
+    }
+
+    glUniformMatrix4fv(location, 1, GL_FALSE, &matrix[0][0]);
+}
+
 unsigned int Shader::GetProgramId() const
 {
     return program_id_;

@@ -8,6 +8,7 @@
 
 #include "shader.h"
 #include "camera.h"
+#include "world.h"
 
 class Engine
 {
@@ -24,6 +25,7 @@ private:
     GLFWwindow* window_;
     std::optional<Shader> shader_;
     std::optional<Camera> camera_;
+    std::optional<World> world_;
 };
 
 #endif // ENGINE_H

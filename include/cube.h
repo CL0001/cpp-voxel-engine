@@ -1,16 +1,17 @@
 #ifndef CUBE_H
 #define CUBE_H
 
-class Cube
-{
-public:
-    Cube();
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
-    void Draw() const;
-private:
-    unsigned int vao_;
-    unsigned int vbo_;
-    unsigned int ebo_;
+struct Cube
+{
+    glm::vec3 position;
+
+    glm::mat4 GetModelMatrix() const
+    {
+        return glm::translate(glm::mat4(1.0f), position);
+    }
 };
 
 #endif // CUBE_H
