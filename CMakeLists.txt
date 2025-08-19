@@ -24,16 +24,14 @@ target_sources(${PROJECT_NAME}
         source/engine.cpp
         source/shader.cpp
         source/camera.cpp
-        source/cube_mesh.cpp
-        source/cube.cpp
+        source/chunk.cpp
         source/world.cpp
 
     PUBLIC
         include/engine.h
         include/shader.h
         include/camera.h
-        include/cube_mesh.h
-        include/cube.h
+        include/chunk.h
         include/world.h
 )
 

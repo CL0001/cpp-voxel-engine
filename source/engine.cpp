@@ -7,8 +7,6 @@
 
 #include "shader.h"
 
-#include "cube.h"
-
 Engine::Engine(const int width, const int height, const char* title)
 {
     if (glfwInit() == 0)

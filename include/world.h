@@ -3,9 +3,8 @@
 
 #include <vector>
 
-#include "cube.h"
-#include "cube_mesh.h"
 #include "shader.h"
+#include "chunk.h"
 
 class World
 {
@@ -15,8 +14,7 @@ public:
     void Draw(const Shader& shader) const;
 
 private:
-    CubeMesh mesh_;
-    std::vector<Cube> cubes_;
+    std::vector<Chunk> chunks_;
 };
 
 #endif // WORLD_H
