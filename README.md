@@ -2,4 +2,3 @@
 ![voxel-engine-devlog-2](https://github.com/user-attachments/assets/30841eca-de56-4733-91d7-86bb6e02a818)
 ![voxel-engine-devlog-3](https://github.com/user-attachments/assets/00024c3b-bf36-493a-97aa-a6d37cc61233)
 ![voxel-engine-devlog-4](https://github.com/user-attachments/assets/dfa58882-7918-4ce3-a274-bb330214af76)
-![voxel-engine-devlog-4](https://github.com/user-attachments/assets/20443e26-985f-4b68-86f0-c30451eae61f)
