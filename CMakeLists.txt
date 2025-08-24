@@ -15,6 +15,7 @@ add_subdirectory(vendor/glfw)
 add_subdirectory(vendor/imgui)
 add_subdirectory(vendor/spdlog)
 add_subdirectory(vendor/glm)
+add_subdirectory(vendor/fastnoiselite)
 
 add_executable(${PROJECT_NAME} "")
 
@@ -37,7 +38,7 @@ target_sources(${PROJECT_NAME}
 
 target_include_directories(${PROJECT_NAME} PRIVATE include)
 
-target_link_libraries(${PROJECT_NAME} PRIVATE glad glfw imgui spdlog glm)
+target_link_libraries(${PROJECT_NAME} PRIVATE glad glfw imgui spdlog glm fastnoiselite)
 
 if (WIN32)
     target_link_libraries(${PROJECT_NAME} PRIVATE opengl32)

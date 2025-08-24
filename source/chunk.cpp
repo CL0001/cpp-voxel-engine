@@ -17,14 +17,18 @@ void Chunk::GenerateCubes()
 {
     std::fill(voxels_.begin(), voxels_.end(), false);
 
-    const int ground = size_ / 3; // a flat floor height
+    const int ground = size_ / 3;
 
     for (int x = 0; x < size_; ++x)
+    {
         for (int z = 0; z < size_; ++z)
+        {
             for (int y = 0; y <= ground; ++y)
             {
-                voxels_[Index(x, y, z)] = true; // solid
+                voxels_[Index(x, y, z)] = true;
             }
+        }
+    }
 }
 
 void Chunk::BuildMesh()
@@ -135,7 +139,7 @@ void Chunk::BuildMesh()
 
 void Chunk::Draw(const Shader& shader) const
 {
-    shader.SetUniform("model_matrix", glm::mat4(1.0f)); // no per-block matrix
+    shader.SetUniform("model_matrix", glm::mat4(1.0f));
     glBindVertexArray(vao_);
     glDrawElements(GL_TRIANGLES, index_count_, GL_UNSIGNED_INT, nullptr);
 }
