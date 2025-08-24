@@ -4,25 +4,28 @@
 #include <vector>
 
 #include "glm/vec3.hpp"
+#include "FastNoiseLite.h"
 
 #include "shader.h"
 
-class Chunk
-{
+class Chunk {
 public:
-    Chunk(glm::ivec3 origin, int size);
+    static constexpr int WIDTH  = 16;
+    static constexpr int DEPTH  = 16;
+    static constexpr int HEIGHT = 256;
 
-    void GenerateCubes();
+    Chunk(glm::ivec3 origin);
+
+    void GenerateTerrain(const FastNoiseLite& noise);
     void BuildMesh();
     void Draw(const Shader& shader) const;
 
 private:
-    bool IsSolid(int x, int y, int z) const;
     int Index(int x, int y, int z) const;
 
-    glm::ivec3 origin_;
-    int size_;
+    bool IsSolid(int x, int y, int z) const;
 
+    glm::ivec3 origin_;
     std::vector<bool> voxels_;
 
     unsigned int vao_ = 0;

@@ -6,24 +6,29 @@ struct Vertex {
     glm::vec3 pos;
 };
 
-Chunk::Chunk(const glm::ivec3 origin, const int size)
+Chunk::Chunk(const glm::ivec3 origin)
     : origin_(origin),
-      size_(size),
-      voxels_(size * size * size, true)
+      voxels_(WIDTH * DEPTH * HEIGHT, true)
 {
 }
 
-void Chunk::GenerateCubes()
+void Chunk::GenerateTerrain(const FastNoiseLite& noise)
 {
     std::fill(voxels_.begin(), voxels_.end(), false);
 
-    const int ground = size_ / 3;
-
-    for (int x = 0; x < size_; ++x)
+    for (int x = 0; x < WIDTH; ++x)
     {
-        for (int z = 0; z < size_; ++z)
+        for (int z = 0; z < DEPTH; ++z)
         {
-            for (int y = 0; y <= ground; ++y)
+
+            const int world_x = origin_.x + x;
+            const int world_z = origin_.z + z;
+
+            const float n = noise.GetNoise(static_cast<float>(world_x), static_cast<float>(world_z));
+
+            const int height = static_cast<int>((n + 1.0f) * 0.5f * (HEIGHT - 1));
+
+            for (int y = 0; y <= height; ++y)
             {
                 voxels_[Index(x, y, z)] = true;
             }
@@ -91,11 +96,11 @@ void Chunk::BuildMesh()
         { 0.5,  0.5, -0.5}
     };
 
-    for (int x = 0; x < size_; ++x)
+    for (int x = 0; x < WIDTH; ++x)
     {
-        for (int y = 0; y < size_; ++y)
+        for (int y = 0; y < HEIGHT; ++y)
         {
-            for (int z = 0; z < size_; ++z)
+            for (int z = 0; z < DEPTH; ++z)
             {
                 if (!IsSolid(x, y, z))
                 {
@@ -146,7 +151,7 @@ void Chunk::Draw(const Shader& shader) const
 
 bool Chunk::IsSolid(const int x, const int y, const int z) const
 {
-    if (x < 0 || y < 0 || z < 0 || x >= size_ || y >= size_ || z >= size_)
+    if (x < 0 || y < 0 || z < 0 || x >= WIDTH || y >= HEIGHT || z >= DEPTH)
     {
         return false;
     }
@@ -156,5 +161,5 @@ bool Chunk::IsSolid(const int x, const int y, const int z) const
 
 int Chunk::Index(const int x, const int y, const int z) const
 {
-    return x + y * size_ + z * size_ * size_;
+    return x + z * WIDTH + y * WIDTH * DEPTH;
 }

@@ -16,7 +16,7 @@ Camera::Camera(const glm::vec3 position, const unsigned int width, const unsigne
       up_(glm::vec3(0.0f, 1.0f, 0.0f)),
       width_(width),
       height_(height),
-      speed_(0.1f),
+      speed_(5.0f),
       sensitivity_(50.0f),
       first_click_(false)
 {
@@ -54,11 +54,11 @@ void Camera::HandleInput(GLFWwindow* window, const double delta_time)
 
     if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
     {
-        speed_ = 1.0f;
+        speed_ = 10.0f;
     }
     else
     {
-        speed_ = 0.4f;
+        speed_ = 5.0f;
     }
 
     if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
