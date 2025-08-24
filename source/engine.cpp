@@ -4,6 +4,9 @@
 #include "glfw/glfw3.h"
 #include "spdlog/spdlog.h"
 #include "glm/vec3.hpp"
+#include "imgui.h"
+#include "imgui_impl_glfw.h"
+#include "imgui_impl_opengl3.h"
 
 #include "shader.h"
 
@@ -46,12 +49,19 @@ Engine::~Engine()
 
 void Engine::Run()
 {
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    const ImGuiIO& io = ImGui::GetIO();
+    (void)io;
+    ImGui::StyleColorsDark();
+    ImGui_ImplGlfw_InitForOpenGL(window_, true);
+    ImGui_ImplOpenGL3_Init("#version 330");
+
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
     while (!glfwWindowShouldClose(window_))
     {
         const double delta_time = CalculateDeltaTime();
-
         camera_->HandleInput(window_, delta_time);
 
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -61,9 +71,28 @@ void Engine::Run()
         camera_->Matrix(45.0f, 0.1f, 100.0f, shader_->GetProgramId(), "camera_matrix");
         world_->Draw(*shader_);
 
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
+
+        ImGui::SetNextWindowPos(ImVec2(10, 10));
+        ImGui::SetNextWindowBgAlpha(0.3f);
+
+        ImGui::Begin("Stats");
+        ImGui::Text("FPS: %.1f", 1.0 / delta_time);
+        ImGui::End();
+
+        // Render ImGui
+        ImGui::Render();
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
         glfwSwapBuffers(window_);
         glfwPollEvents();
     }
+
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
 }
 
 void Engine::FramebufferSizeCallback(GLFWwindow* window, const int width, const int height)
