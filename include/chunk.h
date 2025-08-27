@@ -6,7 +6,7 @@
 #include "glm/vec3.hpp"
 #include "FastNoiseLite.h"
 
-#include "shader.h"
+#include "../modules/shader/shader.h"
 
 class Chunk {
 public:

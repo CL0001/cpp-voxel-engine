@@ -3,7 +3,7 @@
 
 #include <vector>
 
-#include "shader.h"
+#include "../modules/shader/shader.h"
 #include "chunk.h"
 
 class World

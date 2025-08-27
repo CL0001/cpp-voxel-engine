@@ -1,11 +1,10 @@
 #ifndef CAMERA_H
 #define CAMERA_H
 
-#include "imgui_impl_glfw.h"
 #include "glm/vec3.hpp"
 
-#include "shader.h"
-#include "GLFW/glfw3.h"
+#include "glad/glad.h"
+#include "glfw/glfw3.h"
 
 class Camera
 {
