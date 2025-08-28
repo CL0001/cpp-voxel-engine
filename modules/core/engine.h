@@ -3,8 +3,8 @@
 
 #include "window.h"
 #include "shader.h"
+#include "camera.h"
 
-#include "../modules/camera/camera.h"
 #include "world.h"
 
 class Engine

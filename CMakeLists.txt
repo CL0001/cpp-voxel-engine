@@ -17,35 +17,9 @@ add_subdirectory(vendor/spdlog)
 add_subdirectory(vendor/glm)
 add_subdirectory(vendor/fastnoiselite)
 
+add_subdirectory(modules/core)
 add_subdirectory(modules/window)
 add_subdirectory(modules/shader)
 add_subdirectory(modules/camera)
 
-add_executable(${PROJECT_NAME} "")
-
-target_sources(${PROJECT_NAME}
-    PRIVATE
-        source/main.cpp
-        source/engine.cpp
-        source/chunk.cpp
-        source/world.cpp
-
-    PUBLIC
-        include/engine.h
-        include/chunk.h
-        include/world.h
-)
-
-target_include_directories(${PROJECT_NAME} PRIVATE include)
-
-target_link_libraries(${PROJECT_NAME} PRIVATE glad glfw imgui spdlog glm fastnoiselite window shader camera)
-
-if (WIN32)
-    target_link_libraries(${PROJECT_NAME} PRIVATE opengl32)
-elseif (APPLE)
-    target_link_libraries(${PROJECT_NAME} PRIVATE "-framework OpenGL")
-else()
-    target_link_libraries(${PROJECT_NAME} PRIVATE GL)
-endif()
-
-target_compile_definitions(${PROJECT_NAME} PRIVATE ASSETS_PATH="${CMAKE_SOURCE_DIR}/assets/")
+add_subdirectory(source/app)

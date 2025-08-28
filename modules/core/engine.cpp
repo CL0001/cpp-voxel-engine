@@ -1,15 +1,12 @@
 #include "engine.h"
 
-#include "spdlog/spdlog.h"
 #include "glm/vec3.hpp"
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 
-#include "../modules/shader/shader.h"
-
 Engine::Engine(const int width, const int height, const char* title)
-    : window_(width, height, "Voxel Engine"), // initializes first
+    : window_(width, height, "Voxel Engine"),
       shader_(ASSETS_PATH "shaders/base_vertex.glsl", ASSETS_PATH "shaders/base_fragment.glsl"),
       camera_(glm::vec3(0.0f, 0.0f, 0.0f), width, height)
       // world_()
