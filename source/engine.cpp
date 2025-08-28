@@ -51,12 +51,11 @@ void Engine::Run()
         ImGui::Text("FPS: %.1f", 1.0 / delta_time);
         ImGui::End();
 
-        // Render ImGui
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
-        glfwSwapBuffers(window_.GetHandle());
-        glfwPollEvents();
+        window_.SwapBuffers();
+        window_.PollEvents();
     }
 
     ImGui_ImplOpenGL3_Shutdown();
