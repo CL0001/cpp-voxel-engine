@@ -5,6 +5,10 @@
 Renderer::Renderer()
 {
     glEnable(GL_DEPTH_TEST);
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_BACK);
+    glFrontFace(GL_CCW);
+    glActiveTexture(GL_TEXTURE0);
 }
 
 void Renderer::Clear(const float r, const float g, const float b, const float a) const
@@ -16,7 +20,8 @@ void Renderer::Clear(const float r, const float g, const float b, const float a)
 void Renderer::Draw(const World& world, const Shader& shader, const Camera& camera) const
 {
     shader.Use();
-    camera.Matrix(45.0f, 0.1f, 100.0f, shader.GetProgramId(), "camera_matrix");
+    shader.SetUniform("atlas", 0);
+    camera.Matrix(45.0f, 0.1f, 10000.0f, shader.GetProgramId(), "camera_matrix");
     world.Draw(shader);
 }
 

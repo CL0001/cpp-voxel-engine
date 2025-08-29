@@ -1,9 +1,10 @@
 #ifndef RENDERER_H
 #define RENDERER_H
 
-#include "../world/world.h"
+#include "world.h"
 #include "shader.h"
 #include "camera.h"
+#include "texture_atlas.h"
 
 class Renderer
 {
@@ -16,5 +17,4 @@ public:
     void SetPolygonMode() const;
 };
 
-
-#endif //RENDERER_H
+#endif // RENDERER_H

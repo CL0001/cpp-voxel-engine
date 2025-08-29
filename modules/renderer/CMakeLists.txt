@@ -11,4 +11,5 @@ target_link_libraries(renderer PRIVATE
         world
         shader
         camera
+        texture_atlas
 )

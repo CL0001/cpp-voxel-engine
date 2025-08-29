@@ -5,7 +5,11 @@
 
 #include "chunk.h"
 
-World::World() {
+World::World(const char* texture_atlas_path, const int tile_size)
+    : atlas_(texture_atlas_path, tile_size)
+{
+    atlas_.Use();
+
     FastNoiseLite noise;
     noise.SetSeed(14);
     noise.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
@@ -27,7 +31,7 @@ World::World() {
 
             chunks_.emplace_back(origin);
             chunks_.back().GenerateTerrain(noise);
-            chunks_.back().BuildMesh();
+            chunks_.back().BuildMesh(atlas_);
         }
     }
 }

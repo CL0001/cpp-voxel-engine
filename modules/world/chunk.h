@@ -7,6 +7,7 @@
 #include "FastNoiseLite.h"
 
 #include "shader.h"
+#include "texture_atlas.h"
 
 class Chunk {
 public:
@@ -17,13 +18,15 @@ public:
     Chunk(glm::ivec3 origin);
 
     void GenerateTerrain(const FastNoiseLite& noise);
-    void BuildMesh();
+    void BuildMesh(const TextureAtlas& atlas);
     void Draw(const Shader& shader) const;
 
 private:
     int Index(int x, int y, int z) const;
 
     bool IsSolid(int x, int y, int z) const;
+
+    int GetBlockTileIndex(int x, int y, int z) const;
 
     glm::ivec3 origin_;
     std::vector<bool> voxels_;

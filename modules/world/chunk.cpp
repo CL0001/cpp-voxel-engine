@@ -1,9 +1,14 @@
 #include "chunk.h"
 
 #include "glad/glad.h"
+#include "glm/vec2.hpp"
+#include "glm/vec3.hpp"
+
+#include "texture_atlas.h"
 
 struct Vertex {
     glm::vec3 pos;
+    glm::vec2 uv;
 };
 
 Chunk::Chunk(const glm::ivec3 origin)
@@ -36,19 +41,20 @@ void Chunk::GenerateTerrain(const FastNoiseLite& noise)
     }
 }
 
-void Chunk::BuildMesh()
+void Chunk::BuildMesh(const TextureAtlas& atlas)
 {
     std::vector<Vertex> vertices;
     std::vector<unsigned int> indices;
 
-    auto AddFace = [&](const glm::vec3 base, const glm::vec3 face_vertices[4])
+    auto AddFace = [&](const glm::vec3 base, const glm::vec3 face_vertices[4], const int tile_index)
     {
+        const glm::vec4 uv = atlas.GetUV(tile_index);
         const unsigned int start = vertices.size();
 
-        for (int i = 0; i < 4; ++i)
-        {
-            vertices.push_back({base + face_vertices[i]});
-        }
+        vertices.push_back({ base + face_vertices[0], glm::vec2(uv.x, uv.y) });
+        vertices.push_back({ base + face_vertices[1], glm::vec2(uv.x, uv.w) });
+        vertices.push_back({ base + face_vertices[2], glm::vec2(uv.z, uv.w) });
+        vertices.push_back({ base + face_vertices[3], glm::vec2(uv.z, uv.y) });
 
         indices.push_back(start + 0);
         indices.push_back(start + 1);
@@ -58,7 +64,6 @@ void Chunk::BuildMesh()
         indices.push_back(start + 0);
     };
 
-    // cube face templates (unit cube, centered at 0,0,0)
     static constexpr glm::vec3 FACE_RIGHT[4] = {
         {0.5, -0.5, -0.5},
         {0.5,  0.5, -0.5},
@@ -108,13 +113,14 @@ void Chunk::BuildMesh()
                 }
 
                 const glm::vec3 base = glm::vec3(origin_) + glm::vec3(x,y,z);
+                const int tile_index = GetBlockTileIndex(x, y, z);
 
-                if (!IsSolid(x + 1, y, z)) AddFace(base, FACE_RIGHT);
-                if (!IsSolid(x - 1, y, z)) AddFace(base, FACE_LEFT);
-                if (!IsSolid(x, y + 1, z)) AddFace(base, FACE_TOP);
-                if (!IsSolid(x, y - 1, z)) AddFace(base, FACE_BOTTOM);
-                if (!IsSolid(x, y, z + 1)) AddFace(base, FACE_FRONT);
-                if (!IsSolid(x, y, z - 1)) AddFace(base, FACE_BACK);
+                if (!IsSolid(x + 1, y, z)) AddFace(base, FACE_RIGHT, tile_index);
+                if (!IsSolid(x - 1, y, z)) AddFace(base, FACE_LEFT, tile_index);
+                if (!IsSolid(x, y + 1, z)) AddFace(base, FACE_TOP, tile_index);
+                if (!IsSolid(x, y - 1, z)) AddFace(base, FACE_BOTTOM, tile_index);
+                if (!IsSolid(x, y, z + 1)) AddFace(base, FACE_FRONT, tile_index);
+                if (!IsSolid(x, y, z - 1)) AddFace(base, FACE_BACK, tile_index);
             }
         }
     }
@@ -139,6 +145,9 @@ void Chunk::BuildMesh()
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), reinterpret_cast<void*>(0));
     glEnableVertexAttribArray(0);
 
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), reinterpret_cast<void*>(offsetof(Vertex, uv)));
+    glEnableVertexAttribArray(1);
+
     glBindVertexArray(0);
 }
 
@@ -157,6 +166,11 @@ bool Chunk::IsSolid(const int x, const int y, const int z) const
     }
 
     return voxels_[Index(x, y, z)];
+}
+
+int Chunk::GetBlockTileIndex(int x, int y, int z) const
+{
+    return 242;
 }
 
 int Chunk::Index(const int x, const int y, const int z) const

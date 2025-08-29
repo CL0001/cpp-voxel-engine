@@ -12,4 +12,5 @@ target_link_libraries(world PUBLIC
         glm
         fastnoiselite
         shader
+        texture_atlas
 )
