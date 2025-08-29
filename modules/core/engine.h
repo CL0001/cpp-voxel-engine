@@ -4,8 +4,8 @@
 #include "window.h"
 #include "shader.h"
 #include "camera.h"
-
 #include "world.h"
+#include "renderer.h"
 
 class Engine
 {
@@ -21,6 +21,7 @@ private:
     Shader shader_;
     Camera camera_;
     World world_;
+    Renderer renderer_;
 };
 
 #endif // ENGINE_H

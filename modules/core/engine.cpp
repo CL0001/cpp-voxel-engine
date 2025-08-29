@@ -1,5 +1,6 @@
 #include "engine.h"
 
+#include "glfw/glfw3.h"
 #include "glm/vec3.hpp"
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
@@ -9,7 +10,6 @@ Engine::Engine(const int width, const int height, const char* title)
     : window_(width, height, "Voxel Engine"),
       shader_(ASSETS_PATH "shaders/base_vertex.glsl", ASSETS_PATH "shaders/base_fragment.glsl"),
       camera_(glm::vec3(0.0f, 0.0f, 0.0f), width, height)
-      // world_()
 {
 }
 
@@ -23,19 +23,15 @@ void Engine::Run()
     ImGui_ImplGlfw_InitForOpenGL(window_.GetHandle(), true);
     ImGui_ImplOpenGL3_Init("#version 330");
 
-    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    renderer_.SetPolygonMode();
 
     while (!glfwWindowShouldClose(window_.GetHandle()))
     {
         const double delta_time = CalculateDeltaTime();
         camera_.HandleInput(window_.GetHandle(), delta_time);
 
-        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
-
-        shader_.Use();
-        camera_.Matrix(45.0f, 0.1f, 100.0f, shader_.GetProgramId(), "camera_matrix");
-        world_.Draw(shader_);
+        renderer_.Clear(0.0f, 0.0f, 0.0f, 1.0f);
+        renderer_.Draw(world_, shader_, camera_);
 
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();

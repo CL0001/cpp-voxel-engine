@@ -1,7 +1,5 @@
 add_library(core
         engine.cpp
-        world.cpp
-        chunk.cpp
 )
 
 target_include_directories(core PUBLIC
@@ -9,15 +7,14 @@ target_include_directories(core PUBLIC
 )
 
 target_link_libraries(core PUBLIC
-        glad
         glfw
         imgui
-        spdlog
         glm
-        fastnoiselite
         window
+        world
         shader
         camera
+        renderer
 )
 
 if (WIN32)

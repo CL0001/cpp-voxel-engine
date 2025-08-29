@@ -21,5 +21,7 @@ add_subdirectory(modules/core)
 add_subdirectory(modules/window)
 add_subdirectory(modules/shader)
 add_subdirectory(modules/camera)
+add_subdirectory(modules/world)
+add_subdirectory(modules/renderer)
 
 add_subdirectory(source/app)

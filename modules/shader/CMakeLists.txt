@@ -6,7 +6,7 @@ target_include_directories(shader PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-target_link_libraries(shader PRIVATE
+target_link_libraries(shader PUBLIC
         glad
         glm
         spdlog

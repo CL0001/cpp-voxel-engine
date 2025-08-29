@@ -3,6 +3,8 @@
 #include "glm/vec3.hpp"
 #include "FastNoiseLite.h"
 
+#include "chunk.h"
+
 World::World() {
     FastNoiseLite noise;
     noise.SetSeed(14);
