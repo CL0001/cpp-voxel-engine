@@ -1,6 +1,7 @@
 #ifndef WORLD_H
 #define WORLD_H
 
+#include <string>
 #include <vector>
 
 #include "shader.h"
@@ -10,7 +11,10 @@
 class World
 {
 public:
-    World(const char* texture_atlas_path, int tile_size);
+    World(const std::string& texture_path,
+          const std::string& texture_uv_path,
+          const std::string& texture_block_map_path,
+          int tile_size);
 
     void Draw(const Shader& shader) const;
 

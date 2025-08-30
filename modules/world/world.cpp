@@ -5,13 +5,16 @@
 
 #include "chunk.h"
 
-World::World(const char* texture_atlas_path, const int tile_size)
-    : atlas_(texture_atlas_path, tile_size)
+World::World(const std::string& texture_path,
+             const std::string& texture_uv_path,
+             const std::string& texture_block_map_path,
+             const int tile_size)
+    : atlas_(texture_path, texture_uv_path, texture_block_map_path, tile_size)
 {
     atlas_.Use();
 
     FastNoiseLite noise;
-    noise.SetSeed(14);
+    noise.SetSeed(12345);
     noise.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
     noise.SetFractalType(FastNoiseLite::FractalType_FBm);
     noise.SetFrequency(0.003);

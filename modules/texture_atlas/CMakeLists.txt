@@ -10,4 +10,5 @@ target_link_libraries(texture_atlas PUBLIC
         glad
         glm
         stb
+        nlohmann_json
 )

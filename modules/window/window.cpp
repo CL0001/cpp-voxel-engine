@@ -25,7 +25,7 @@ Window::Window(const int width, const int height, const char* title)
     }
 
     glfwMakeContextCurrent(window_);
-    glfwSwapInterval(1);
+    glfwSwapInterval(0);
     glfwSetFramebufferSizeCallback(window_, [](GLFWwindow* window, int w, int h) {
         glViewport(0, 0, w, h);
         spdlog::info("Framebuffer resized: {}x{}", w, h);

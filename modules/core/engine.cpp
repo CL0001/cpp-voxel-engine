@@ -9,7 +9,7 @@ Engine::Engine(const int width, const int height, const char* title)
     : window_(width, height, "Voxel Engine"),
       shader_(ASSETS_PATH "shaders/base_vertex.glsl", ASSETS_PATH "shaders/base_fragment.glsl"),
       camera_(glm::vec3(0.0f, 0.0f, 0.0f), width, height),
-      world_(ASSETS_PATH "textures/terrain.png", 16)
+      world_(ASSETS_PATH "textures/blocks/terrain.png", ASSETS_PATH "textures/blocks/terrain_texture_uv.json", ASSETS_PATH "textures/blocks/terrain_block_map.json", 16)
 {
 }
 
@@ -17,7 +17,8 @@ void Engine::Run()
 {
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
-    const ImGuiIO& io = ImGui::GetIO();
+    ImGuiIO& io = ImGui::GetIO();
+    io.ConfigFlags &= ~ImGuiConfigFlags_NoMouseCursorChange;
     (void)io;
     ImGui::StyleColorsDark();
     ImGui_ImplGlfw_InitForOpenGL(window_.GetHandle(), true);
@@ -38,9 +39,10 @@ void Engine::Run()
         ImGui::NewFrame();
 
         ImGui::SetNextWindowPos(ImVec2(10, 10));
-        ImGui::SetNextWindowBgAlpha(0.3f);
+        ImGui::SetNextWindowBgAlpha(0.8f);
 
         ImGui::Begin("Stats");
+        ImGui::SetWindowFontScale(2.0f);
         ImGui::Text("FPS: %.1f", 1.0 / delta_time);
         ImGui::End();
 
