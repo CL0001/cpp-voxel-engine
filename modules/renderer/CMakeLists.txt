@@ -12,4 +12,6 @@ target_link_libraries(renderer PRIVATE
         shader
         camera
         texture_atlas
+        gui
+        clock
 )

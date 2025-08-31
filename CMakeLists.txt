@@ -26,5 +26,7 @@ add_subdirectory(modules/camera)
 add_subdirectory(modules/world)
 add_subdirectory(modules/renderer)
 add_subdirectory(modules/texture_atlas)
+add_subdirectory(modules/gui)
+add_subdirectory(modules/clock)
 
 add_subdirectory(source/app)

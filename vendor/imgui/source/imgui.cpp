@@ -11973,7 +11973,7 @@ void ImGui::OpenPopupEx(ImGuiID id, ImGuiPopupFlags popup_flags)
     else
     {
         // Gently handle the user mistakenly calling OpenPopup() every frames: it is likely a programming mistake!
-        // However, if we were to run the regular code path, the ui would become completely unusable because the popup will always be
+        // However, if we were to run the regular code path, the gui would become completely unusable because the popup will always be
         // in hidden-while-calculating-size state _while_ claiming focus. Which is extremely confusing situation for the programmer.
         // Instead, for successive frames calls to OpenPopup(), we silently avoid reopening even if ImGuiPopupFlags_NoReopen is not specified.
         bool keep_existing = false;

@@ -15,6 +15,8 @@ target_link_libraries(core PUBLIC
         shader
         camera
         renderer
+        gui
+        clock
 )
 
 if (WIN32)

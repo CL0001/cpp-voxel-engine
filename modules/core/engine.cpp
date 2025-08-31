@@ -1,71 +1,30 @@
 #include "engine.h"
 
 #include "glm/vec3.hpp"
-#include "imgui.h"
-#include "imgui_impl_glfw.h"
-#include "imgui_impl_opengl3.h"
+
+#include "clock.h"
 
 Engine::Engine(const int width, const int height, const char* title)
     : window_(width, height, "Voxel Engine"),
       shader_(ASSETS_PATH "shaders/base_vertex.glsl", ASSETS_PATH "shaders/base_fragment.glsl"),
       camera_(glm::vec3(0.0f, 0.0f, 0.0f), width, height),
-      world_(ASSETS_PATH "textures/blocks/terrain.png", ASSETS_PATH "textures/blocks/terrain_texture_uv.json", ASSETS_PATH "textures/blocks/terrain_block_map.json", 16)
+      world_(ASSETS_PATH "textures/blocks/terrain.png", ASSETS_PATH "textures/blocks/terrain_texture_uv.json", ASSETS_PATH "textures/blocks/terrain_block_map.json", 16),
+      gui_(window_.GetHandle())
 {
 }
 
 void Engine::Run()
 {
-    IMGUI_CHECKVERSION();
-    ImGui::CreateContext();
-    ImGuiIO& io = ImGui::GetIO();
-    io.ConfigFlags &= ~ImGuiConfigFlags_NoMouseCursorChange;
-    (void)io;
-    ImGui::StyleColorsDark();
-    ImGui_ImplGlfw_InitForOpenGL(window_.GetHandle(), true);
-    ImGui_ImplOpenGL3_Init("#version 330");
-
-    //renderer_.SetPolygonMode();
-
     while (!window_.ShouldClose())
     {
-        const double delta_time = CalculateDeltaTime();
-        camera_.HandleInput(window_.GetHandle(), delta_time);
+        Clock::Instance().Update();
+
+        camera_.HandleInput(window_.GetHandle(), Clock::Instance().GetDeltaTime());
 
         renderer_.Clear(0.0f, 0.0f, 0.0f, 1.0f);
-        renderer_.Draw(world_, shader_, camera_);
-
-        ImGui_ImplOpenGL3_NewFrame();
-        ImGui_ImplGlfw_NewFrame();
-        ImGui::NewFrame();
-
-        ImGui::SetNextWindowPos(ImVec2(10, 10));
-        ImGui::SetNextWindowBgAlpha(0.8f);
-
-        ImGui::Begin("Stats");
-        ImGui::SetWindowFontScale(2.0f);
-        ImGui::Text("FPS: %.1f", 1.0 / delta_time);
-        ImGui::End();
-
-        ImGui::Render();
-        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+        renderer_.Draw(world_, shader_, camera_, gui_);
 
         window_.SwapBuffers();
         window_.PollEvents();
     }
-
-    ImGui_ImplOpenGL3_Shutdown();
-    ImGui_ImplGlfw_Shutdown();
-    ImGui::DestroyContext();
-}
-
-double Engine::CalculateDeltaTime()
-{
-    static double last_time = glfwGetTime();
-
-    const double current_time = glfwGetTime();
-    const double delta_time = current_time - last_time;
-
-    last_time = current_time;
-
-    return delta_time;
 }

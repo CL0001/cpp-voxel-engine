@@ -1,11 +1,12 @@
 #ifndef ENGINE_H
 #define ENGINE_H
 
-#include "window.h"
-#include "shader.h"
 #include "camera.h"
-#include "world.h"
+#include "gui.h"
 #include "renderer.h"
+#include "shader.h"
+#include "window.h"
+#include "world.h"
 
 class Engine
 {
@@ -15,13 +16,12 @@ public:
     void Run();
 
 private:
-    static double CalculateDeltaTime();
-
     Window window_;
     Shader shader_;
     Camera camera_;
     World world_;
     Renderer renderer_;
+    GUI gui_;
 };
 
 #endif // ENGINE_H
