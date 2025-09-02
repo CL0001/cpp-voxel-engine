@@ -11,7 +11,6 @@ Renderer::Renderer()
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
     glFrontFace(GL_CCW);
-    glActiveTexture(GL_TEXTURE0);
 }
 
 void Renderer::Clear(const float r, const float g, const float b, const float a) const

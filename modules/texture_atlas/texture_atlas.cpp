@@ -87,6 +87,7 @@ TextureAtlas::TextureAtlas(const std::string& texture_path,
 
 void TextureAtlas::Use() const
 {
+    glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, texture_id_);
 }
 
