@@ -5,3 +5,5 @@
 ![voxel-engine-devlog-5](https://github.com/user-attachments/assets/88a9c961-5092-41ec-9533-8731c0738dec)
 
 https://github.com/user-attachments/assets/0d45574e-6b80-4de4-9592-5ae3dfdb9de3
+
+https://github.com/user-attachments/assets/27f30299-a2e6-423e-a158-a6890e6c4c84
