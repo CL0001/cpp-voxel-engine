@@ -7,9 +7,25 @@
 #include "glm/vec3.hpp"
 #include "FastNoiseLite.h"
 
-#include "geometry.h"
 #include "shader.h"
 #include "texture_atlas.h"
+
+struct Vertex
+{
+    glm::vec3 position;
+    glm::vec2 uv;
+    glm::vec3 color;
+};
+
+struct FaceContext
+{
+    const glm::vec3& base;
+    const glm::vec3* face_vertices;
+    const std::string& texture_name;
+    glm::vec3 color;
+    bool flip_u = false;
+    bool flip_v = false;
+};
 
 class Chunk
 {
@@ -25,19 +41,18 @@ public:
     void Draw(const Shader& shader) const;
 
 private:
-    static void AddFace(const glm::vec3& base,
-                        const glm::vec3 face_vertices[4],
-                        const std::string& texture_name,
+    static void AddFace(const FaceContext& ctx,
                         const TextureAtlas& atlas,
                         std::vector<Vertex>& vertices,
-                        std::vector<unsigned int>& indices,
-                        bool flip_u = false,
-                        bool flip_v = false,
-                        const glm::vec3& color = glm::vec3(1.0f));
-
-    void UploadMeshData(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices);
-
+                        std::vector<unsigned int>& indices);
     static int Index(int x, int y, int z);
+
+    void AddBlockFaces(const glm::ivec3& coords,
+                       const TextureAtlas& atlas,
+                       std::vector<Vertex>& vertices,
+                       std::vector<unsigned int>& indices) const;
+    void UploadMeshData(const std::vector<Vertex>& vertices,
+                        const std::vector<unsigned int>& indices);
     bool IsSolid(int x, int y, int z) const;
 
     glm::ivec3 origin_;

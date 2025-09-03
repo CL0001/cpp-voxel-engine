@@ -13,4 +13,5 @@ target_link_libraries(world PUBLIC
         fastnoiselite
         shader
         texture_atlas
+        camera
 )

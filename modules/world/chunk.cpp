@@ -5,7 +5,58 @@
 #include "glm/vec3.hpp"
 
 #include "texture_atlas.h"
-#include <iostream>
+
+struct UnitCube
+{
+    inline static constexpr glm::vec3 FACE_FRONT[4] =
+    {
+        {-0.5f, -0.5f, 0.5f},
+        { 0.5f, -0.5f, 0.5f},
+        { 0.5f,  0.5f, 0.5f},
+        {-0.5f,  0.5f, 0.5f}
+    };
+
+    inline static constexpr glm::vec3 FACE_BACK[4] =
+    {
+        { 0.5f, -0.5f, -0.5f},
+        {-0.5f, -0.5f, -0.5f},
+        {-0.5f,  0.5f, -0.5f},
+        { 0.5f,  0.5f, -0.5f}
+    };
+
+    inline static constexpr glm::vec3 FACE_RIGHT[4] =
+    {
+        {0.5f, -0.5f,  0.5f},
+        {0.5f, -0.5f, -0.5f},
+        {0.5f,  0.5f, -0.5f},
+        {0.5f,  0.5f,  0.5f}
+    };
+
+    inline static constexpr glm::vec3 FACE_LEFT[4] =
+    {
+        {-0.5f, -0.5f, -0.5f},
+        {-0.5f, -0.5f,  0.5f},
+        {-0.5f,  0.5f,  0.5f},
+        {-0.5f,  0.5f, -0.5f}
+    };
+
+    inline static constexpr glm::vec3 FACE_TOP[4] =
+    {
+        {-0.5f, 0.5f,  0.5f},
+        { 0.5f, 0.5f,  0.5f},
+        { 0.5f, 0.5f, -0.5f},
+        {-0.5f, 0.5f, -0.5f}
+    };
+
+    inline static constexpr glm::vec3 FACE_BOTTOM[4] =
+    {
+        {-0.5f, -0.5f, -0.5f},
+        { 0.5f, -0.5f, -0.5f},
+        { 0.5f, -0.5f,  0.5f},
+        {-0.5f, -0.5f,  0.5f}
+    };
+};
+
 
 Chunk::Chunk(const glm::ivec3 origin)
     : origin_(origin),
@@ -29,9 +80,18 @@ void Chunk::GenerateTerrain(const FastNoiseLite& noise)
 
             for (int y = 0; y <= height; ++y)
             {
-                if (y == height) voxels_[Index(x, y, z)] = "grass_block";
-                else if (y >= height - 3) voxels_[Index(x, y, z)] = "dirt_block";
-                else voxels_[Index(x, y, z)] = "stone_block";
+                if (y == height)
+                {
+                    voxels_[Index(x, y, z)] = "grass_block";
+                }
+                else if (y >= height - 3)
+                {
+                    voxels_[Index(x, y, z)] = "dirt_block";
+                }
+                else
+                {
+                    voxels_[Index(x, y, z)] = "stone_block";
+                }
             }
         }
     }
@@ -42,47 +102,13 @@ void Chunk::BuildMesh(const TextureAtlas& atlas)
     std::vector<Vertex> vertices;
     std::vector<unsigned int> indices;
 
-    constexpr glm::vec3 plainsGreen{ 0.35f, 1.0f, 0.35f };
-    constexpr glm::vec3 defaultColor{ 1.0f };
-
     for (int x = 0; x < WIDTH; ++x)
     {
         for (int y = 0; y < HEIGHT; ++y)
         {
             for (int z = 0; z < DEPTH; ++z)
             {
-                const std::string& block_name = voxels_[Index(x, y, z)];
-                if (block_name.empty()) continue;
-
-                glm::vec3 base = glm::vec3(origin_) + glm::vec3(x, y, z);
-
-                const BlockDefinition* block_def = nullptr;
-
-                try
-                {
-                    block_def = &atlas.GetBlockDefinition(block_name);
-                }
-                catch (const std::runtime_error&)
-                {
-                    continue;
-                }
-
-                std::string top_tex    = block_def->top_texture_name.empty()    ? "" : block_def->top_texture_name;
-                std::string bottom_tex = block_def->bottom_texture_name.empty() ? "" : block_def->bottom_texture_name;
-                std::string side_tex   = block_def->side_texture_name.empty()   ? "" : block_def->side_texture_name;
-
-                if (!IsSolid(x + 1, y, z)) AddFace(base, UnitCube::FACE_RIGHT, side_tex, atlas, vertices, indices, false, false, defaultColor);
-                if (!IsSolid(x - 1, y, z)) AddFace(base, UnitCube::FACE_LEFT,  side_tex, atlas, vertices, indices, true,  false, defaultColor);
-
-                if (!IsSolid(x, y + 1, z))
-                {
-                    glm::vec3 color = (block_name == "grass_block") ? plainsGreen : defaultColor;
-                    AddFace(base, UnitCube::FACE_TOP, top_tex, atlas, vertices, indices, false, false, color);
-                }
-
-                if (!IsSolid(x, y - 1, z)) AddFace(base, UnitCube::FACE_BOTTOM, bottom_tex, atlas, vertices, indices, false, false, defaultColor);
-                if (!IsSolid(x, y, z + 1)) AddFace(base, UnitCube::FACE_FRONT, side_tex, atlas, vertices, indices, false, false, defaultColor);
-                if (!IsSolid(x, y, z - 1)) AddFace(base, UnitCube::FACE_BACK,  side_tex, atlas, vertices, indices, true,  false, defaultColor);
+                AddBlockFaces({x, y, z}, atlas, vertices, indices);
             }
         }
     }
@@ -97,40 +123,28 @@ void Chunk::Draw(const Shader& shader) const
     glDrawElements(GL_TRIANGLES, index_count_, GL_UNSIGNED_INT, nullptr);
 }
 
-void Chunk::AddFace(const glm::vec3& base,
-                    const glm::vec3 face_vertices[4], const std::string& texture_name,
+void Chunk::AddFace(const FaceContext& ctx,
                     const TextureAtlas& atlas,
                     std::vector<Vertex>& vertices,
-                    std::vector<unsigned int>& indices,
-                    const bool flip_u,
-                    const bool flip_v,
-                    const glm::vec3& color)
+                    std::vector<unsigned int>& indices)
 {
-    if (texture_name.empty()) return;
+    if (ctx.texture_name.empty()) return;
 
-    glm::vec4 uv;
-    try
-    {
-        uv = atlas.GetUV(texture_name);
-    }
-    catch (const std::runtime_error&)
-    {
-        return;
-    }
+    const glm::vec4 uv = atlas.GetUV(ctx.texture_name);
 
-    glm::vec2 uv00 = { uv.x, uv.y };
-    glm::vec2 uv10 = { uv.z, uv.y };
-    glm::vec2 uv11 = { uv.z, uv.w };
-    glm::vec2 uv01 = { uv.x, uv.w };
+    glm::vec2 uv00{ uv.x, uv.y };
+    glm::vec2 uv10{ uv.z, uv.y };
+    glm::vec2 uv11{ uv.z, uv.w };
+    glm::vec2 uv01{ uv.x, uv.w };
 
-    if (flip_u) std::swap(uv00.x, uv10.x), std::swap(uv01.x, uv11.x);
-    if (flip_v) std::swap(uv00.y, uv01.y), std::swap(uv10.y, uv11.y);
+    if (ctx.flip_u) std::swap(uv00.x, uv10.x), std::swap(uv01.x, uv11.x);
+    if (ctx.flip_v) std::swap(uv00.y, uv01.y), std::swap(uv10.y, uv11.y);
 
     const unsigned int start = vertices.size();
-    vertices.push_back({ base + face_vertices[0], uv00, color });
-    vertices.push_back({ base + face_vertices[1], uv10, color });
-    vertices.push_back({ base + face_vertices[2], uv11, color });
-    vertices.push_back({ base + face_vertices[3], uv01, color });
+    vertices.push_back({ ctx.base + ctx.face_vertices[0], uv00, ctx.color });
+    vertices.push_back({ ctx.base + ctx.face_vertices[1], uv10, ctx.color });
+    vertices.push_back({ ctx.base + ctx.face_vertices[2], uv11, ctx.color });
+    vertices.push_back({ ctx.base + ctx.face_vertices[3], uv01, ctx.color });
 
     indices.push_back(start + 0);
     indices.push_back(start + 1);
@@ -138,6 +152,61 @@ void Chunk::AddFace(const glm::vec3& base,
     indices.push_back(start + 2);
     indices.push_back(start + 3);
     indices.push_back(start + 0);
+}
+
+void Chunk::AddBlockFaces(const glm::ivec3& coords,
+                          const TextureAtlas& atlas,
+                          std::vector<Vertex>& vertices,
+                          std::vector<unsigned int>& indices) const
+{
+    const std::string& block_name = voxels_[Index(coords.x, coords.y, coords.z)];
+
+    if (block_name.empty())
+    {
+        return;
+    }
+
+    const glm::vec3 base = glm::vec3(origin_) + glm::vec3(coords);
+
+    const BlockDefinition* block_def = &atlas.GetBlockDefinition(block_name);
+
+    constexpr glm::vec3 defaultColor{1.0f};
+    constexpr glm::vec3 plainsGreen{0.35f, 1.0f, 0.35f};
+
+    const std::string& top_tex    = block_def->top_texture_name.empty()    ? "" : block_def->top_texture_name;
+    const std::string& bottom_tex = block_def->bottom_texture_name.empty() ? "" : block_def->bottom_texture_name;
+    const std::string& side_tex   = block_def->side_texture_name.empty()   ? "" : block_def->side_texture_name;
+
+    if (!IsSolid(coords.x + 1, coords.y, coords.z))
+    {
+        AddFace({ base, UnitCube::FACE_RIGHT, side_tex }, atlas, vertices, indices);
+    }
+
+    if (!IsSolid(coords.x - 1, coords.y, coords.z))
+    {
+        AddFace({ base, UnitCube::FACE_LEFT, side_tex, defaultColor, true }, atlas, vertices, indices);
+    }
+
+    if (!IsSolid(coords.x, coords.y + 1, coords.z))
+    {
+        const glm::vec3 color = (block_name == "grass_block") ? plainsGreen : defaultColor;
+        AddFace({ base, UnitCube::FACE_TOP, top_tex, color }, atlas, vertices, indices);
+    }
+
+    if (!IsSolid(coords.x, coords.y - 1, coords.z))
+    {
+        AddFace({ base, UnitCube::FACE_BOTTOM, bottom_tex, defaultColor }, atlas, vertices, indices);
+    }
+
+    if (!IsSolid(coords.x, coords.y, coords.z + 1))
+    {
+        AddFace({ base, UnitCube::FACE_FRONT, side_tex, defaultColor }, atlas, vertices, indices);
+    }
+
+    if (!IsSolid(coords.x, coords.y, coords.z - 1))
+    {
+        AddFace({ base, UnitCube::FACE_BACK, side_tex, defaultColor, true }, atlas, vertices, indices);
+    }
 }
 
 void Chunk::UploadMeshData(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices)
@@ -178,7 +247,10 @@ int Chunk::Index(const int x, const int y, const int z)
 
 bool Chunk::IsSolid(const int x, const int y, const int z) const
 {
-    if ( x < 0 || y < 0 || z < 0 || x >= WIDTH || y >= HEIGHT || z >= DEPTH) return false;
+    if ( x < 0 || y < 0 || z < 0 || x >= WIDTH || y >= HEIGHT || z >= DEPTH)
+    {
+        return false;
+    }
 
     return !voxels_[Index(x,y,z)].empty();
 }

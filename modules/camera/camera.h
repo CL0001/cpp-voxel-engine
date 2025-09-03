@@ -1,10 +1,9 @@
 #ifndef CAMERA_H
 #define CAMERA_H
 
-#include "glm/vec3.hpp"
-
 #include "glad/glad.h"
 #include "glfw/glfw3.h"
+#include "glm/glm.hpp"
 
 class Camera
 {
@@ -14,6 +13,9 @@ public:
     void Matrix(float fov, float near_plane, float far_plane, unsigned int shader_program_id, const char* uniform) const;
 
     void HandleInput(GLFWwindow* window, double delta_time);
+
+    glm::mat4 GetViewMatrix() const;
+    glm::mat4 GetProjectionMatrix() const;
 
 private:
     glm::vec3 position_;

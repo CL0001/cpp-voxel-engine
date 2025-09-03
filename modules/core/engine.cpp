@@ -6,9 +6,13 @@
 
 Engine::Engine(const int width, const int height, const char* title)
     : window_(width, height, "Voxel Engine"),
-      shader_(ASSETS_PATH "shaders/base_vertex.glsl", ASSETS_PATH "shaders/base_fragment.glsl"),
-      camera_(glm::vec3(0.0f, 0.0f, 0.0f), width, height),
-      world_(ASSETS_PATH "textures/blocks/terrain.png", ASSETS_PATH "textures/blocks/terrain_texture_uv.json", ASSETS_PATH "textures/blocks/terrain_block_map.json", 16),
+      camera_(glm::vec3(0.0f, 255.0f, 0.0f), width, height),
+      world_(ASSETS_PATH "shaders/base.vert",
+             ASSETS_PATH "shaders/base.frag",
+             ASSETS_PATH "textures/blocks/terrain.png",
+             ASSETS_PATH "textures/blocks/terrain_texture_uv.json",
+             ASSETS_PATH "textures/blocks/terrain_block_map.json",
+             16),
       gui_(window_.GetHandle())
 {
 }
@@ -22,7 +26,7 @@ void Engine::Run()
         camera_.HandleInput(window_.GetHandle(), Clock::Instance().GetDeltaTime());
 
         renderer_.Clear(0.0f, 0.0f, 0.0f, 1.0f);
-        renderer_.Draw(world_, shader_, camera_, gui_);
+        renderer_.Draw(world_, camera_, gui_);
 
         window_.SwapBuffers();
         window_.PollEvents();

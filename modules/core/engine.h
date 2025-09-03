@@ -4,7 +4,6 @@
 #include "camera.h"
 #include "gui.h"
 #include "renderer.h"
-#include "shader.h"
 #include "window.h"
 #include "world.h"
 
@@ -17,7 +16,6 @@ public:
 
 private:
     Window window_;
-    Shader shader_;
     Camera camera_;
     World world_;
     Renderer renderer_;

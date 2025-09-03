@@ -94,3 +94,13 @@ void Camera::HandleInput(GLFWwindow* window, const double delta_time)
         first_click_ = true;
     }
 }
+
+glm::mat4 Camera::GetViewMatrix() const
+{
+    return glm::mat3(glm::lookAt(position_, position_ + orientation_, up_));
+}
+
+glm::mat4 Camera::GetProjectionMatrix() const
+{
+    return glm::perspective(glm::radians(45.0f), static_cast<float>(width_) / height_, 0.1f, 100.0f);
+}

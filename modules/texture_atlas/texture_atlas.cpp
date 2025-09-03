@@ -7,32 +7,38 @@
 #include "glad/glad.h"
 #include "json.hpp"
 
-#define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
 TextureAtlas::TextureAtlas(const std::string& texture_path,
                            const std::string& texture_uv_path,
                            const std::string& texture_block_map_path,
-                           const int tile_size)
-    : tile_size_(tile_size)
+                           const int tile_size,
+                           const unsigned int texture_unit)
+    : texture_unit_(texture_unit), tile_size_(tile_size)
 {
+    int nr_channels;
+
     stbi_set_flip_vertically_on_load(true);
-    int channels;
-    unsigned char* data = stbi_load(texture_path.c_str(), &atlas_width_, &atlas_height_, &channels, 4);
-    if (!data)
+
+    if (unsigned char* data = stbi_load(texture_path.c_str(), &width_, &height_, &nr_channels, 4))
+    {
+        glGenTextures(1, &texture_id_);
+        glBindTexture(GL_TEXTURE_2D, texture_id_);
+
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width_, height_, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+        glGenerateMipmap(GL_TEXTURE_2D);
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+        stbi_image_free(data);
+    }
+    else
     {
         throw std::runtime_error("Failed to load texture atlas: " + texture_path);
     }
-
-    glGenTextures(1, &texture_id_);
-    glBindTexture(GL_TEXTURE_2D, texture_id_);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, atlas_width_, atlas_height_, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
-    glGenerateMipmap(GL_TEXTURE_2D);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    stbi_image_free(data);
 
     std::ifstream uv_file(texture_uv_path);
     if (!uv_file.is_open())
@@ -45,8 +51,11 @@ TextureAtlas::TextureAtlas(const std::string& texture_path,
 
     for (auto& [key, value] : uv_json.items())
     {
-        if (value.is_object() && value.contains("u") && value.contains("v") &&
-            !value["u"].is_null() && !value["v"].is_null())
+        if (value.is_object()
+            && value.contains("u")
+            && value.contains("v")
+            && !value["u"].is_null()
+            && !value["v"].is_null())
         {
             texture_uv_map_[key] = { value["u"].get<int>(), value["v"].get<int>() };
         }
@@ -85,9 +94,14 @@ TextureAtlas::TextureAtlas(const std::string& texture_path,
     }
 }
 
+TextureAtlas::~TextureAtlas()
+{
+    glDeleteTextures(1, &texture_id_);
+}
+
 void TextureAtlas::Use() const
 {
-    glActiveTexture(GL_TEXTURE0);
+    glActiveTexture(GL_TEXTURE0 + texture_unit_);
     glBindTexture(GL_TEXTURE_2D, texture_id_);
 }
 
@@ -103,8 +117,8 @@ glm::vec4 TextureAtlas::GetUV(const std::string& tile_key) const
     const int u = it->second.u;
     const int v = it->second.v;
 
-    const float u_size = static_cast<float>(tile_size_) / atlas_width_;
-    const float v_size = static_cast<float>(tile_size_) / atlas_height_;
+    const float u_size = static_cast<float>(tile_size_) / width_;
+    const float v_size = static_cast<float>(tile_size_) / height_;
 
     const float u_min = u * u_size;
     const float v_min = 1.0f - (v + 1) * v_size; // flip Y

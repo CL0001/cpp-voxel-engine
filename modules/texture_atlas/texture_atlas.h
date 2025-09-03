@@ -26,22 +26,24 @@ public:
     TextureAtlas(const std::string& texture_path,
                  const std::string& texture_uv_path,
                  const std::string& texture_block_map_path,
-                 int tile_size);
+                 int tile_size,
+                 unsigned int texture_unit);
+
+    ~TextureAtlas();
 
     void Use() const;
 
     glm::vec4 GetUV(const std::string& tile_key) const;
-
     const BlockDefinition& GetBlockDefinition(const std::string& block_name) const;
 
 private:
     unsigned int texture_id_;
-    int atlas_width_;
-    int atlas_height_;
+    unsigned int texture_unit_;
+    int width_;
+    int height_;
     int tile_size_;
 
     std::unordered_map<std::string, TileUV> texture_uv_map_;
-
     std::unordered_map<std::string, BlockDefinition> block_map_;
 };
 
