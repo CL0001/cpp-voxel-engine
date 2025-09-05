@@ -25,9 +25,7 @@ void Renderer::Clear(const float r, const float g, const float b, const float a)
 
 void Renderer::Draw(const World& world, const Camera& camera, const GUI& gui) const
 {
-    glDisable(GL_CULL_FACE);
     skybox_.Draw(camera);
-    glEnable(GL_CULL_FACE);
 
     world.Draw(camera);
     gui.Draw(1 / Clock::Instance().GetDeltaTime());

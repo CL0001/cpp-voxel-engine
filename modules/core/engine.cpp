@@ -5,14 +5,15 @@
 #include "clock.h"
 
 Engine::Engine(const int width, const int height, const char* title)
-    : window_(width, height, "Voxel Engine"),
-      camera_(glm::vec3(0.0f, 255.0f, 0.0f), width, height),
+    : window_(width, height, title),
+      camera_(glm::vec3(0.0f, 150.0f, 0.0f), width, height),
       world_(ASSETS_PATH "shaders/base.vert",
              ASSETS_PATH "shaders/base.frag",
              ASSETS_PATH "textures/blocks/terrain.png",
              ASSETS_PATH "textures/blocks/terrain_texture_uv.json",
              ASSETS_PATH "textures/blocks/terrain_block_map.json",
-             16),
+             16,
+             14),
       gui_(window_.GetHandle())
 {
 }

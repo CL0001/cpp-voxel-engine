@@ -75,24 +75,35 @@ void Chunk::GenerateTerrain(const FastNoiseLite& noise)
             const int world_x = origin_.x + x;
             const int world_z = origin_.z + z;
 
-            const float n = noise.GetNoise(static_cast<float>(world_x), static_cast<float>(world_z));
-            const int height = static_cast<int>((n + 1.0f) * 0.5f * (HEIGHT - 1));
+            constexpr float base_height = 100.0f;
+
+            float n = noise.GetNoise(static_cast<float>(world_x), static_cast<float>(world_z));
+
+            n = (n + 1.0f) * 0.5f;
+
+            const float shaped = std::pow(n, 1.5f);
+
+            const int height = static_cast<int>(std::clamp(base_height + shaped * 120.0f, base_height, 255.0f));
 
             for (int y = 0; y <= height; ++y)
             {
                 if (y == height)
                 {
-                    voxels_[Index(x, y, z)] = "grass_block";
+                    if (height > 220)
+                        voxels_[Index(x,y,z)] = "snow_block";
+                    else
+                        voxels_[Index(x,y,z)] = "grass_block";
                 }
                 else if (y >= height - 3)
                 {
-                    voxels_[Index(x, y, z)] = "dirt_block";
+                    voxels_[Index(x,y,z)] = "dirt_block";
                 }
                 else
                 {
-                    voxels_[Index(x, y, z)] = "stone_block";
+                    voxels_[Index(x,y,z)] = "stone_block";
                 }
             }
+
         }
     }
 }
@@ -167,7 +178,6 @@ void Chunk::AddBlockFaces(const glm::ivec3& coords,
     }
 
     const glm::vec3 base = glm::vec3(origin_) + glm::vec3(coords);
-
     const BlockDefinition* block_def = &atlas.GetBlockDefinition(block_name);
 
     constexpr glm::vec3 defaultColor{1.0f};
@@ -179,7 +189,7 @@ void Chunk::AddBlockFaces(const glm::ivec3& coords,
 
     if (!IsSolid(coords.x + 1, coords.y, coords.z))
     {
-        AddFace({ base, UnitCube::FACE_RIGHT, side_tex }, atlas, vertices, indices);
+        AddFace({ base, UnitCube::FACE_RIGHT, side_tex, defaultColor }, atlas, vertices, indices);
     }
 
     if (!IsSolid(coords.x - 1, coords.y, coords.z))

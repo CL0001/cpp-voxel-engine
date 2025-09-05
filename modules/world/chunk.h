@@ -21,7 +21,7 @@ struct FaceContext
 {
     const glm::vec3& base;
     const glm::vec3* face_vertices;
-    const std::string& texture_name;
+    std::string texture_name;
     glm::vec3 color;
     bool flip_u = false;
     bool flip_v = false;

@@ -8,7 +8,10 @@
 #include "camera.h"
 #include "shader.h"
 
-Skybox::Skybox(const std::string& vertex_shader_path, const std::string& fragment_shader_path, const unsigned int texture_unit, const std::array<std::string, 6>& faces)
+Skybox::Skybox(const std::string& vertex_shader_path,
+               const std::string& fragment_shader_path,
+               const unsigned int texture_unit,
+               const std::array<std::string, 6>& faces)
     : shader_(vertex_shader_path, fragment_shader_path),
       texture_unit_(texture_unit)
 {
@@ -19,10 +22,10 @@ Skybox::Skybox(const std::string& vertex_shader_path, const std::string& fragmen
     glBindVertexArray(vao_);
 
     glBindBuffer(GL_ARRAY_BUFFER, vbo_);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices_), &vertices_, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices_), vertices_, GL_STATIC_DRAW);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo_);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices_), &indices_, GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices_), indices_, GL_STATIC_DRAW);
 
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), static_cast<void*>(nullptr));
 
@@ -59,7 +62,7 @@ Skybox::Skybox(const std::string& vertex_shader_path, const std::string& fragmen
     }
 
     shader_.Use();
-    glUniform1i(glGetUniformLocation(shader_.GetProgramId(), "skybox"), texture_unit);
+    glUniform1i(glGetUniformLocation(shader_.GetProgramId(), "skybox"), texture_unit_);
 }
 
 Skybox::~Skybox()
@@ -72,6 +75,7 @@ Skybox::~Skybox()
 
 void Skybox::Draw(const Camera& camera) const
 {
+    glDisable(GL_CULL_FACE);
     glDepthMask(GL_FALSE);
     glDepthFunc(GL_LEQUAL);
 
@@ -88,4 +92,5 @@ void Skybox::Draw(const Camera& camera) const
     glBindVertexArray(0);
     glDepthFunc(GL_LESS);
     glDepthMask(GL_TRUE);
+    glEnable(GL_CULL_FACE);
 }

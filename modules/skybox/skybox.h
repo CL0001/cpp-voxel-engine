@@ -10,7 +10,10 @@
 class Skybox
 {
 public:
-    Skybox(const std::string& vertex_shader_path, const std::string& fragment_shader_path, unsigned int texture_unit, const std::array<std::string, 6>& faces);
+    Skybox(const std::string& vertex_shader_path,
+           const std::string& fragment_shader_path,
+           unsigned int texture_unit,
+           const std::array<std::string, 6>& faces);
     ~Skybox();
 
     void Draw(const Camera& camera) const;

@@ -19,5 +19,12 @@
             "side" : "stone_block_all",
             "bottom" : "stone_block_all"
         }
+    },
+    "snow_block" : {
+        "textures" : {
+            "top" : "snow_block_all",
+            "side" : "snow_block_all",
+            "bottom" : "snow_block_all"
+        }
     }
 }

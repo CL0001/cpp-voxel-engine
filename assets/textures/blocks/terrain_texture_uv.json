@@ -2,5 +2,6 @@
     "grass_block_top" : { "u" : 0, "v" : 0 },
     "stone_block_all" : { "u" : 1, "v" : 0 },
     "grass_block_bottom" : { "u" : 2, "v" : 0 },
-    "grass_block_side" : { "u" : 3, "v" : 0 }
+    "grass_block_side" : { "u" : 3, "v" : 0 },
+    "snow_block_all" : { "u" : 2, "v" : 4}
 }
