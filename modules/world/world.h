@@ -23,6 +23,8 @@ public:
 
     void Draw(const Camera& camera) const;
 
+    bool IsSolid(int x, int y, int z) const;
+
 private:
     std::vector<Chunk> chunks_;
     Shader shader_;
@@ -30,6 +32,9 @@ private:
 
     int seed_;
     float scale_;
+
+    int world_width_chunks_ = 32;
+    int world_depth_chunks_ = 32;
 };
 
 #endif // WORLD_H

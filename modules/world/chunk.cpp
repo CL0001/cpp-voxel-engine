@@ -9,6 +9,7 @@
 #include "glm/gtc/noise.hpp"
 
 #include "texture_atlas.h"
+#include "world.h"
 
 struct UnitCube
 {
@@ -144,7 +145,7 @@ void Chunk::GenerateTerrain(const int seed)
     }
 }
 
-void Chunk::BuildMesh(const TextureAtlas& atlas)
+void Chunk::BuildMesh(const TextureAtlas& atlas, const World& world)
 {
     std::vector<Vertex> vertices;
     std::vector<unsigned int> indices;
@@ -155,7 +156,7 @@ void Chunk::BuildMesh(const TextureAtlas& atlas)
         {
             for (int z = 0; z < DEPTH; ++z)
             {
-                AddBlockFaces({x, y, z}, atlas, vertices, indices);
+                AddBlockFaces({x, y, z}, atlas, vertices, indices, world);
             }
         }
     }
@@ -204,12 +205,15 @@ void Chunk::AddFace(const FaceContext& ctx,
 void Chunk::AddBlockFaces(const glm::ivec3& coords,
                           const TextureAtlas& atlas,
                           std::vector<Vertex>& vertices,
-                          std::vector<unsigned int>& indices) const
+                          std::vector<unsigned int>& indices,
+                          const World& world) const
 {
     const std::string& block_name = voxels_[Index(coords.x, coords.y, coords.z)];
 
     if (block_name.empty())
+    {
         return;
+    }
 
     const glm::vec3 base = glm::vec3(origin_) + glm::vec3(coords);
     const BlockDefinition* block_def = &atlas.GetBlockDefinition(block_name);
@@ -221,33 +225,37 @@ void Chunk::AddBlockFaces(const glm::ivec3& coords,
     const std::string& bottom_tex = block_def->bottom_texture_name.empty() ? "" : block_def->bottom_texture_name;
     const std::string& side_tex   = block_def->side_texture_name.empty()   ? "" : block_def->side_texture_name;
 
-    if (!IsSolid(coords.x + 1, coords.y, coords.z))
+    const int gx = origin_.x + coords.x;
+    const int gy = origin_.y + coords.y;
+    const int gz = origin_.z + coords.z;
+
+    if (!world.IsSolid(gx + 1, gy, gz))
     {
         AddFace({ base, UnitCube::FACE_RIGHT, side_tex, defaultColor }, atlas, vertices, indices);
     }
 
-    if (!IsSolid(coords.x - 1, coords.y, coords.z))
+    if (!world.IsSolid(gx - 1, gy, gz))
     {
         AddFace({ base, UnitCube::FACE_LEFT, side_tex, defaultColor, true }, atlas, vertices, indices);
     }
 
-    if (!IsSolid(coords.x, coords.y + 1, coords.z))
+    if (!world.IsSolid(gx, gy + 1, gz))
     {
-        const glm::vec3 color = (block_name == "grass_block") ? plainsGreen : defaultColor;
+        glm::vec3 color = (block_name == "grass_block") ? plainsGreen : defaultColor;
         AddFace({ base, UnitCube::FACE_TOP, top_tex, color }, atlas, vertices, indices);
     }
 
-    if (!IsSolid(coords.x, coords.y - 1, coords.z))
+    if (!world.IsSolid(gx, gy - 1, gz))
     {
         AddFace({ base, UnitCube::FACE_BOTTOM, bottom_tex, defaultColor }, atlas, vertices, indices);
     }
 
-    if (!IsSolid(coords.x, coords.y, coords.z + 1))
+    if (!world.IsSolid(gx, gy, gz + 1))
     {
         AddFace({ base, UnitCube::FACE_FRONT, side_tex, defaultColor }, atlas, vertices, indices);
     }
 
-    if (!IsSolid(coords.x, coords.y, coords.z - 1))
+    if (!world.IsSolid(gx, gy, gz - 1))
     {
         AddFace({ base, UnitCube::FACE_BACK, side_tex, defaultColor, true }, atlas, vertices, indices);
     }
@@ -292,7 +300,9 @@ int Chunk::Index(const int x, const int y, const int z)
 bool Chunk::IsSolid(const int x, const int y, const int z) const
 {
     if (x < 0 || y < 0 || z < 0 || x >= WIDTH || y >= HEIGHT || z >= DEPTH)
+    {
         return false;
+    }
 
     return !voxels_[Index(x,y,z)].empty();
 }
