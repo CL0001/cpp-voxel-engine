@@ -4,11 +4,9 @@
 #include <string>
 #include <vector>
 
-#include "FastNoiseLite.h"
-
 #include "camera.h"
-#include "shader.h"
 #include "chunk.h"
+#include "shader.h"
 #include "texture_atlas.h"
 
 class World
@@ -20,7 +18,8 @@ public:
           const std::string& texture_uv_path,
           const std::string& texture_block_map_path,
           int tile_size,
-          int seed);
+          int seed,
+          float scale);
 
     void Draw(const Camera& camera) const;
 
@@ -29,7 +28,8 @@ private:
     Shader shader_;
     TextureAtlas atlas_;
 
-    FastNoiseLite noise_;
+    int seed_;
+    float scale_;
 };
 
 #endif // WORLD_H

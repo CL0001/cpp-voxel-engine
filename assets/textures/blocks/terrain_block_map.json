@@ -26,5 +26,19 @@
             "side" : "snow_block_all",
             "bottom" : "snow_block_all"
         }
+    },
+    "sand_block" : {
+        "textures" : {
+            "top" : "sand_block_all",
+            "side" : "sand_block_all",
+            "bottom" : "sand_block_all"
+        }
+    },
+    "water_block" : {
+        "textures" : {
+            "top" : "water_block_all",
+            "side" : "water_block_all",
+            "bottom" : "water_block_all"
+        }
     }
 }

@@ -1,8 +1,12 @@
 #include "chunk.h"
 
+#include <algorithm>
+#include <cmath>
+
 #include "glad/glad.h"
 #include "glm/vec2.hpp"
 #include "glm/vec3.hpp"
+#include "glm/gtc/noise.hpp"
 
 #include "texture_atlas.h"
 
@@ -57,16 +61,18 @@ struct UnitCube
     };
 };
 
-
 Chunk::Chunk(const glm::ivec3 origin)
     : origin_(origin),
       voxels_(WIDTH * DEPTH * HEIGHT, "")
 {
 }
 
-void Chunk::GenerateTerrain(const FastNoiseLite& noise)
+void Chunk::GenerateTerrain(const int seed)
 {
-    std::fill(voxels_.begin(), voxels_.end(), "");
+    std::ranges::fill(voxels_, "");
+
+    constexpr float base_height = 100.0f;
+    constexpr float scale = 255.0f;
 
     for (int x = 0; x < WIDTH; ++x)
     {
@@ -75,24 +81,55 @@ void Chunk::GenerateTerrain(const FastNoiseLite& noise)
             const int world_x = origin_.x + x;
             const int world_z = origin_.z + z;
 
-            constexpr float base_height = 100.0f;
+            glm::vec2 pos(world_x / scale, world_z / scale);
 
-            float n = noise.GetNoise(static_cast<float>(world_x), static_cast<float>(world_z));
+            float max_amplitude = 0.0f;
+            float amplitude = 1.0f;
+            float frequency = 1.0f;
+            float sum = 0.0f;
 
-            n = (n + 1.0f) * 0.5f;
+            for (int i = 0; i < 5; ++i)
+            {
+                glm::vec2 p = pos * frequency + glm::vec2(seed * 1013, seed * 1619);
+                const float n = glm::simplex(p);
+                sum += n * amplitude;
 
-            const float shaped = std::pow(n, 1.5f);
+                max_amplitude += amplitude;
+                frequency *= 2.0f;
+                amplitude *= 0.5f;
+            }
 
-            const int height = static_cast<int>(std::clamp(base_height + shaped * 120.0f, base_height, 255.0f));
+            const float n = (sum / max_amplitude + 1.0f) / 2.0f;
+
+            const float shaped = std::pow(n, 1.3f);
+
+            float peak = glm::simplex(pos * 0.2f + glm::vec2(seed * 733, seed * 911));
+            peak = (peak + 1.0f) * 0.5f;
+            const float peak_boost = std::pow(peak, 4.0f);
+
+            const int height = static_cast<int>(
+                std::clamp(base_height + shaped * (60.0f + peak_boost * 90.0f), base_height, 255.0f)
+            );
+
+            const float snow_noise = glm::simplex(pos * 0.05f + glm::vec2(seed * 17, seed * 37));
+            const int snow_offset = static_cast<int>(snow_noise * 10.0f);
+            const int snow_line = 175 + snow_offset;
+            const int rock_line = snow_line - 10;
+            const int snow_base = snow_line - 3;
 
             for (int y = 0; y <= height; ++y)
             {
-                if (y == height)
+                if (y >= snow_base && y <= height)
                 {
-                    if (height > 220)
-                        voxels_[Index(x,y,z)] = "snow_block";
-                    else
-                        voxels_[Index(x,y,z)] = "grass_block";
+                    voxels_[Index(x,y,z)] = "snow_block";
+                }
+                else if (y > rock_line)
+                {
+                    voxels_[Index(x,y,z)] = "stone_block";
+                }
+                else if (y == height)
+                {
+                    voxels_[Index(x,y,z)] = "grass_block";
                 }
                 else if (y >= height - 3)
                 {
@@ -103,7 +140,6 @@ void Chunk::GenerateTerrain(const FastNoiseLite& noise)
                     voxels_[Index(x,y,z)] = "stone_block";
                 }
             }
-
         }
     }
 }
@@ -173,9 +209,7 @@ void Chunk::AddBlockFaces(const glm::ivec3& coords,
     const std::string& block_name = voxels_[Index(coords.x, coords.y, coords.z)];
 
     if (block_name.empty())
-    {
         return;
-    }
 
     const glm::vec3 base = glm::vec3(origin_) + glm::vec3(coords);
     const BlockDefinition* block_def = &atlas.GetBlockDefinition(block_name);
@@ -257,10 +291,8 @@ int Chunk::Index(const int x, const int y, const int z)
 
 bool Chunk::IsSolid(const int x, const int y, const int z) const
 {
-    if ( x < 0 || y < 0 || z < 0 || x >= WIDTH || y >= HEIGHT || z >= DEPTH)
-    {
+    if (x < 0 || y < 0 || z < 0 || x >= WIDTH || y >= HEIGHT || z >= DEPTH)
         return false;
-    }
 
     return !voxels_[Index(x,y,z)].empty();
 }

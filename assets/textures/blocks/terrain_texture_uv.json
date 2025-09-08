@@ -3,5 +3,7 @@
     "stone_block_all" : { "u" : 1, "v" : 0 },
     "grass_block_bottom" : { "u" : 2, "v" : 0 },
     "grass_block_side" : { "u" : 3, "v" : 0 },
-    "snow_block_all" : { "u" : 2, "v" : 4}
+    "snow_block_all" : { "u" : 2, "v" : 4},
+    "sand_block_all" : { "u" : 13, "v" : 12 },
+    "water_block_all" : { "u" : 2, "v" : 1 }
 }

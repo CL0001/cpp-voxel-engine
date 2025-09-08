@@ -3,10 +3,7 @@
 
 #include <string>
 #include <vector>
-
 #include "glm/vec3.hpp"
-#include "FastNoiseLite.h"
-
 #include "shader.h"
 #include "texture_atlas.h"
 
@@ -36,7 +33,7 @@ public:
 
     explicit Chunk(glm::ivec3 origin);
 
-    void GenerateTerrain(const FastNoiseLite& noise);
+    void GenerateTerrain(int seed);
     void BuildMesh(const TextureAtlas& atlas);
     void Draw(const Shader& shader) const;
 

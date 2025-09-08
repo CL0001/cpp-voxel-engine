@@ -13,7 +13,8 @@ Engine::Engine(const int width, const int height, const char* title)
              ASSETS_PATH "textures/blocks/terrain_texture_uv.json",
              ASSETS_PATH "textures/blocks/terrain_block_map.json",
              16,
-             14),
+             1,
+             128),
       gui_(window_.GetHandle())
 {
 }
