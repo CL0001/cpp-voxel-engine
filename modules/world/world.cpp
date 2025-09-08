@@ -40,7 +40,7 @@ void World::Draw(const Camera& camera) const
     shader_.Use();
     atlas_.Use();
 
-    camera.Matrix(45.0f, 0.1f, 10000.0f, shader_.GetProgramId(), "camera_matrix");
+    camera.UploadViewProjectionMatrix(shader_.GetProgramId(), "camera_matrix");
 
     for (const auto& chunk : chunks_)
     {

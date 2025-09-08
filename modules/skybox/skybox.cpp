@@ -80,7 +80,7 @@ void Skybox::Draw(const Camera& camera) const
     glDepthFunc(GL_LEQUAL);
 
     shader_.Use();
-    shader_.SetUniform("view", camera.GetViewMatrix());
+    shader_.SetUniform("view", camera.GetViewMatrixNoTranslation());
     shader_.SetUniform("projection", camera.GetProjectionMatrix());
 
     glBindVertexArray(vao_);

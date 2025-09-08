@@ -10,11 +10,12 @@ class Camera
 public:
     Camera(glm::vec3 position, unsigned int width, unsigned int height);
 
-    void Matrix(float fov, float near_plane, float far_plane, unsigned int shader_program_id, const char* uniform) const;
+    void UploadViewProjectionMatrix(unsigned int shader_program_id, const char* uniform) const;
 
     void HandleInput(GLFWwindow* window, double delta_time);
 
     glm::mat4 GetViewMatrix() const;
+    glm::mat4 GetViewMatrixNoTranslation() const;
     glm::mat4 GetProjectionMatrix() const;
 
 private:
@@ -24,6 +25,7 @@ private:
 
     unsigned int width_;
     unsigned int height_;
+    float fov_;
 
     float speed_;
     float sensitivity_;

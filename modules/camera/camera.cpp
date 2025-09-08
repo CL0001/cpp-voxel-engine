@@ -16,43 +16,52 @@ Camera::Camera(const glm::vec3 position, const unsigned int width, const unsigne
       up_(glm::vec3(0.0f, 1.0f, 0.0f)),
       width_(width),
       height_(height),
+      fov_(45.0f),
       speed_(10.0f),
       sensitivity_(50.0f),
       first_click_(false)
 {
 }
 
-void Camera::Matrix(const float fov, const float near_plane, const float far_plane, unsigned int shader_program_id, const char* uniform) const
+void Camera::UploadViewProjectionMatrix(const unsigned int shader_program_id, const char* uniform) const
 {
-    const glm::mat4 view = glm::lookAt(position_, position_ + orientation_, up_);
-    const glm::mat4 projection = glm::perspective(fov, static_cast<float>(width_) / static_cast<float>(height_), near_plane, far_plane);
-
-    glUniformMatrix4fv(glGetUniformLocation(shader_program_id, uniform), 1, GL_FALSE, glm::value_ptr(projection * view));
+    glUniformMatrix4fv(glGetUniformLocation(shader_program_id, uniform), 1, GL_FALSE, glm::value_ptr(GetProjectionMatrix() * GetViewMatrix()));
 }
 
 void Camera::HandleInput(GLFWwindow* window, const double delta_time)
 {
+    const float velocity = speed_ * static_cast<float>(delta_time);
+
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
     {
-        position_ += speed_ * orientation_ * static_cast<float>(delta_time);
-    }
-
-    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-    {
-        position_ -= glm::normalize(glm::cross(orientation_, up_)) * speed_ * static_cast<float>(delta_time);
+        position_ += orientation_ * velocity;
     }
 
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
     {
-        position_ -= speed_ * orientation_ * static_cast<float>(delta_time);
+        position_ -= orientation_ * velocity;
+    }
+
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+    {
+        position_ -= glm::normalize(glm::cross(orientation_, up_)) * velocity;
     }
 
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
     {
-        position_ += glm::normalize(glm::cross(orientation_, up_)) * speed_ * static_cast<float>(delta_time);
+        position_ += glm::normalize(glm::cross(orientation_, up_)) * velocity;
     }
 
+    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+    {
+        position_ += up_ * velocity;
+    }
     if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+    {
+        position_ -= up_ * velocity;
+    }
+
+    if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
     {
         speed_ = 20.0f;
     }
@@ -71,15 +80,19 @@ void Camera::HandleInput(GLFWwindow* window, const double delta_time)
             first_click_ = false;
         }
 
-        double mouse_x;
-        double mouse_y;
+        double mouse_x, mouse_y;
         glfwGetCursorPos(window, &mouse_x, &mouse_y);
 
         const float rotate_x = sensitivity_ * static_cast<float>(mouse_y - height_ / 2.0) / static_cast<float>(height_);
         const float rotate_y = sensitivity_ * static_cast<float>(mouse_x - width_ / 2.0) / static_cast<float>(width_);
 
-        const glm::vec3 new_orientation = glm::rotate(orientation_, glm::radians(-rotate_x), glm::normalize(glm::cross(orientation_, up_)));
+        const glm::vec3 new_orientation = glm::rotate(
+            orientation_,
+            glm::radians(-rotate_x),
+            glm::normalize(glm::cross(orientation_, up_))
+        );
 
+        // Prevent camera from flipping upside down
         if (abs(glm::angle(new_orientation, up_) - glm::radians(90.0f)) <= glm::radians(85.0f))
         {
             orientation_ = new_orientation;
@@ -88,7 +101,7 @@ void Camera::HandleInput(GLFWwindow* window, const double delta_time)
         orientation_ = glm::rotate(orientation_, glm::radians(-rotate_y), up_);
         glfwSetCursorPos(window, width_ / 2.0, height_ / 2.0);
     }
-    else if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_RELEASE)
+    else
     {
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
         first_click_ = true;
@@ -97,10 +110,15 @@ void Camera::HandleInput(GLFWwindow* window, const double delta_time)
 
 glm::mat4 Camera::GetViewMatrix() const
 {
+    return glm::lookAt(position_, position_ + orientation_, up_);
+}
+
+glm::mat4 Camera::GetViewMatrixNoTranslation() const
+{
     return glm::mat3(glm::lookAt(position_, position_ + orientation_, up_));
 }
 
 glm::mat4 Camera::GetProjectionMatrix() const
 {
-    return glm::perspective(glm::radians(45.0f), static_cast<float>(width_) / height_, 0.1f, 100.0f);
+    return glm::perspective(glm::radians(fov_), static_cast<float>(width_) / height_, 0.1f, 1000.0f);
 }
