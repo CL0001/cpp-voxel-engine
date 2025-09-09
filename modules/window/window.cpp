@@ -20,13 +20,13 @@ Window::Window(const int width, const int height, const char* title)
 
     if (window_ == nullptr)
     {
-        glfwTerminate();
         throw std::runtime_error("Failed to create GLFW window");
     }
 
     glfwMakeContextCurrent(window_);
     glfwSwapInterval(0);
-    glfwSetFramebufferSizeCallback(window_, [](GLFWwindow* window, int w, int h) {
+    glfwSetFramebufferSizeCallback(window_, [](GLFWwindow* window, int w, int h)
+    {
         glViewport(0, 0, w, h);
         spdlog::info("Framebuffer resized: {}x{}", w, h);
     });
@@ -43,11 +43,7 @@ Window::Window(const int width, const int height, const char* title)
 
 Window::~Window()
 {
-    if (window_)
-    {
-        glfwDestroyWindow(window_);
-    }
-
+    glfwDestroyWindow(window_);
     glfwTerminate();
 }
 

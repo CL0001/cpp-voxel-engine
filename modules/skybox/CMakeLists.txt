@@ -6,7 +6,7 @@ target_include_directories(skybox PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-target_link_libraries(skybox PUBLIC
+target_link_libraries(skybox PRIVATE
         glad
         stb
         shader

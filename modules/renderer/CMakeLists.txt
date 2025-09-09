@@ -8,7 +8,7 @@ target_include_directories(renderer PUBLIC
 
 target_link_libraries(renderer PUBLIC
         glad
-        world
+        engine
         shader
         camera
         texture_atlas
