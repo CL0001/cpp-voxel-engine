@@ -3,6 +3,8 @@
 #include "glm/vec3.hpp"
 
 #include "clock.h"
+#include "stats_panel.h"
+#include "controls_panel.h"
 
 Engine::Engine(const int width, const int height, const char* title)
     : window_(width, height, title),
@@ -15,8 +17,10 @@ Engine::Engine(const int width, const int height, const char* title)
              16,
              1,
              128),
-      gui_(window_.GetHandle())
+      gui_manager_(window_.GetHandle())
 {
+    gui_manager_.AddPanel(std::make_unique<VEng::GUI::StatsPanel>());
+    gui_manager_.AddPanel(std::make_unique<VEng::GUI::ControlsPanel>());
 }
 
 void Engine::Run()
@@ -25,10 +29,16 @@ void Engine::Run()
     {
         Clock::Instance().Update();
 
+        std::vector<VEng::GUI::PanelData> data;
+        data.emplace_back(VEng::GUI::StatsData{1 / Clock::Instance().GetDeltaTime(), 512.0f});
+        data.emplace_back(VEng::GUI::ControlsData{true, false, true, false, false, true, false});
+
+        gui_manager_.Update(data);
+
         camera_.HandleInput(window_.GetHandle(), Clock::Instance().GetDeltaTime());
 
         renderer_.Clear(0.0f, 0.0f, 0.0f, 1.0f);
-        renderer_.Draw(world_, camera_, gui_);
+        renderer_.Draw(world_, camera_, gui_manager_);
 
         window_.SwapBuffers();
         window_.PollEvents();

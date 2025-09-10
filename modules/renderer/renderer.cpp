@@ -3,7 +3,7 @@
 #include "glad/glad.h"
 
 #include "clock.h"
-#include "gui.h"
+#include "gui_manager.h"
 
 Renderer::Renderer()
     : skybox_(ASSETS_PATH "shaders/skybox.vert",
@@ -23,12 +23,12 @@ void Renderer::Clear(const float r, const float g, const float b, const float a)
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
-void Renderer::Draw(const World& world, const Camera& camera, const GUI& gui) const
+void Renderer::Draw(const World& world, const Camera& camera, const VEng::GUI::Manager& gui_manager) const
 {
     skybox_.Draw(camera);
 
     world.Draw(camera);
-    gui.Draw(1 / Clock::Instance().GetDeltaTime());
+    gui_manager.Draw();
 }
 
 void Renderer::SetPolygonMode() const

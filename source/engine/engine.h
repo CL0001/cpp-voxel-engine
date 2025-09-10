@@ -2,7 +2,7 @@
 #define ENGINE_H
 
 #include "camera.h"
-#include "gui.h"
+#include "gui_manager.h"
 #include "renderer.h"
 #include "window.h"
 #include "world.h"
@@ -19,7 +19,7 @@ private:
     Camera camera_;
     World world_;
     Renderer renderer_;
-    GUI gui_;
+    VEng::GUI::Manager gui_manager_;
 };
 
 #endif // ENGINE_H

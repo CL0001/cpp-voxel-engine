@@ -1,5 +1,7 @@
 add_library(gui STATIC
-        gui.cpp
+        gui_manager.cpp
+        controls_panel.cpp
+        stats_panel.cpp
 )
 
 target_include_directories(gui PUBLIC
