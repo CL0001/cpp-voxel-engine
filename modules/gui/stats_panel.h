@@ -13,6 +13,6 @@ namespace VEng::GUI
         void Draw() const override;
 
     private:
-        StatsData stats_{};
+        StatsData stats_data_{};
     };
 }

@@ -20,7 +20,6 @@ add_subdirectory(${VENDOR_DIR}/glfw)
 add_subdirectory(${VENDOR_DIR}/imgui)
 add_subdirectory(${VENDOR_DIR}/spdlog)
 add_subdirectory(${VENDOR_DIR}/glm)
-add_subdirectory(${VENDOR_DIR}/fast_noise_lite)
 add_subdirectory(${VENDOR_DIR}/stb)
 add_subdirectory(${VENDOR_DIR}/nlohmann_json)
 
