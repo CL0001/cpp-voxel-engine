@@ -1,0 +1,123 @@
+#include "camera.h"
+
+#include "glad/glad.h"
+#include "glfw/glfw3.h"
+#define GLM_ENABLE_EXPERIMENTAL
+#include "glm/glm.hpp"
+#include "glm/gtc/matrix_transform.hpp"
+#include "glm/gtc/type_ptr.hpp"
+#include "glm/gtx/rotate_vector.hpp"
+#include "glm/gtx/vector_angle.hpp"
+
+VEng::Graphics::Camera::Camera(const glm::vec3 position, const unsigned int width, const unsigned int height)
+    : position_(position),
+      orientation_(glm::vec3(0.0f, 0.0f, -1.0f)),
+      up_(glm::vec3(0.0f, 1.0f, 0.0f)),
+      width_(width),
+      height_(height),
+      fov_(45.0f),
+      speed_(10.0f),
+      sensitivity_(50.0f),
+      first_click_(false)
+{
+}
+
+void VEng::Graphics::Camera::UploadViewProjectionMatrix(const unsigned int shader_program_id, const char* uniform) const
+{
+    glUniformMatrix4fv(glGetUniformLocation(shader_program_id, uniform), 1, GL_FALSE, glm::value_ptr(GetProjectionMatrix() * GetViewMatrix()));
+}
+
+void VEng::Graphics::Camera::HandleInput(GLFWwindow* window, const double delta_time)
+{
+    const float velocity = speed_ * static_cast<float>(delta_time);
+
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+    {
+        position_ += orientation_ * velocity;
+    }
+
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+    {
+        position_ -= orientation_ * velocity;
+    }
+
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+    {
+        position_ -= glm::normalize(glm::cross(orientation_, up_)) * velocity;
+    }
+
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+    {
+        position_ += glm::normalize(glm::cross(orientation_, up_)) * velocity;
+    }
+
+    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+    {
+        position_ += up_ * velocity;
+    }
+    if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+    {
+        position_ -= up_ * velocity;
+    }
+
+    if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
+    {
+        speed_ = 20.0f;
+    }
+    else
+    {
+        speed_ = 10.0f;
+    }
+
+    if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
+    {
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
+        if (first_click_)
+        {
+            glfwSetCursorPos(window, width_ / 2.0, height_ / 2.0);
+            first_click_ = false;
+        }
+
+        double mouse_x, mouse_y;
+        glfwGetCursorPos(window, &mouse_x, &mouse_y);
+
+        const float rotate_x = sensitivity_ * static_cast<float>(mouse_y - height_ / 2.0) / static_cast<float>(height_);
+        const float rotate_y = sensitivity_ * static_cast<float>(mouse_x - width_ / 2.0) / static_cast<float>(width_);
+
+        const glm::vec3 new_orientation = glm::rotate(
+            orientation_,
+            glm::radians(-rotate_x),
+            glm::normalize(glm::cross(orientation_, up_))
+        );
+
+        // Prevent camera from flipping upside down
+        if (abs(glm::angle(new_orientation, up_) - glm::radians(90.0f)) <= glm::radians(85.0f))
+        {
+            orientation_ = new_orientation;
+        }
+
+        orientation_ = glm::rotate(orientation_, glm::radians(-rotate_y), up_);
+        glfwSetCursorPos(window, width_ / 2.0, height_ / 2.0);
+    }
+    else
+    {
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+        first_click_ = true;
+    }
+}
+
+glm::mat4 VEng::Graphics::Camera::GetViewMatrix() const
+{
+    return glm::lookAt(position_, position_ + orientation_, up_);
+}
+
+glm::mat4 VEng::Graphics::Camera::GetViewMatrixNoTranslation() const
+{
+    return glm::mat3(glm::lookAt(position_, position_ + orientation_, up_));
+}
+
+glm::mat4 VEng::Graphics::Camera::GetProjectionMatrix() const
+{
+    return glm::perspective(glm::radians(fov_), static_cast<float>(width_) / height_, 0.1f, 1000.0f);
+}
