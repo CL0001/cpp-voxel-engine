@@ -1,12 +1,12 @@
 #include "spdlog/spdlog.h"
 
-#include "engine.h"
+#include "engine.hpp"
 
 int main()
 {
     try
     {
-        VEng::Engine engine(640, 480, "Voxel Engine");
+        VEng::Engine engine(1280, 720, "Voxel Engine");
         engine.Run();
     }
     catch (const std::exception& e)

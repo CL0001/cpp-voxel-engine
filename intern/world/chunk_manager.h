@@ -3,15 +3,15 @@
 #include <string>
 #include <vector>
 
-#include "graphics/camera/camera.h"
-#include "graphics/shader/shader.h"
-#include "graphics/texture_atlas/texture_atlas.h"
+#include "graphics/shader/shader.hpp"
+#include "graphics/texture_atlas/texture_atlas.hpp"
 
 #include "chunk.h"
+#include "graphics/renderer/renderer.hpp"
 
 namespace VEng::World
 {
-    class ChunkManager
+    class ChunkManager final : public Graphics::IRenderable
     {
     public:
         ChunkManager(const std::string& vertex_shader_path,
@@ -23,7 +23,7 @@ namespace VEng::World
                      int seed,
                      float scale);
 
-        void Draw(const Graphics::Camera& camera) const;
+        void Draw(const Graphics::RenderContext& context) const override;
 
         bool IsSolid(int x, int y, int z) const;
 

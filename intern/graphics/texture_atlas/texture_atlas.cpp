@@ -1,4 +1,4 @@
-#include "texture_atlas.h"
+#include "texture_atlas.hpp"
 
 #include <iostream>
 #include <stdexcept>

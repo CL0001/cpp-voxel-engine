@@ -1,18 +1,18 @@
 #pragma once
 
-#include "igui_panel.h"
+#include "igui_panel.hpp"
 
 namespace VEng::GUI
 {
-    class StatsPanel final : public IGUIPanel
+    class ControlsPanel final : public IGUIPanel
     {
     public:
-        StatsPanel() = default;
+        ControlsPanel() = default;
 
         void Update(const PanelData& data) override;
         void Draw() const override;
 
     private:
-        StatsData stats_data_{};
+        ControlsData controls_data_{};
     };
 }

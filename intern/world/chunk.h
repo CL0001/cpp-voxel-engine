@@ -5,8 +5,8 @@
 
 #include "glm/vec3.hpp"
 
-#include "graphics/shader/shader.h"
-#include "graphics/texture_atlas/texture_atlas.h"
+#include "graphics/shader/shader.hpp"
+#include "graphics/texture_atlas/texture_atlas.hpp"
 
 namespace VEng::World
 {

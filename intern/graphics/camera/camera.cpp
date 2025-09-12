@@ -1,35 +1,38 @@
-#include "camera.h"
+#include "camera.hpp"
 
 #include "glad/glad.h"
 #include "glfw/glfw3.h"
+
 #define GLM_ENABLE_EXPERIMENTAL
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtc/type_ptr.hpp"
+#include "glm/gtx/io.hpp"
 #include "glm/gtx/rotate_vector.hpp"
 #include "glm/gtx/vector_angle.hpp"
+#include "spdlog/fmt/bundled/base.h"
 
-VEng::Graphics::Camera::Camera(const glm::vec3 position, const unsigned int width, const unsigned int height)
-    : position_(position),
-      orientation_(glm::vec3(0.0f, 0.0f, -1.0f)),
-      up_(glm::vec3(0.0f, 1.0f, 0.0f)),
-      width_(width),
-      height_(height),
-      fov_(45.0f),
-      speed_(10.0f),
-      sensitivity_(50.0f),
-      first_click_(false)
+VEng::Graphics::Camera::Camera(const CameraSettings& settings)
+    : position_(settings.position),
+      orientation_(settings.orientation),
+      up_(settings.up),
+      width_(settings.width),
+      height_(settings.height),
+      fov_(settings.fov),
+      movement_speed_(settings.normal_speed, settings.accelerated_speed, settings.normal_speed),
+      sensitivity_(settings.sensitivity),
+      first_mouse_click_(false)
 {
 }
 
-void VEng::Graphics::Camera::UploadViewProjectionMatrix(const unsigned int shader_program_id, const char* uniform) const
+void VEng::Graphics::Camera::UploadViewProjectionMatrix(const unsigned int shader_program_id, const char* uniform) const noexcept
 {
     glUniformMatrix4fv(glGetUniformLocation(shader_program_id, uniform), 1, GL_FALSE, glm::value_ptr(GetProjectionMatrix() * GetViewMatrix()));
 }
 
-void VEng::Graphics::Camera::HandleInput(GLFWwindow* window, const double delta_time)
+void VEng::Graphics::Camera::HandleInput(GLFWwindow* window, const double delta_time) noexcept
 {
-    const float velocity = speed_ * static_cast<float>(delta_time);
+    const float velocity = movement_speed_.current * static_cast<float>(delta_time);
 
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
     {
@@ -62,21 +65,21 @@ void VEng::Graphics::Camera::HandleInput(GLFWwindow* window, const double delta_
 
     if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
     {
-        speed_ = 20.0f;
+        movement_speed_.current = movement_speed_.accelerated;
     }
     else
     {
-        speed_ = 10.0f;
+        movement_speed_.current = movement_speed_.normal;
     }
 
     if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
     {
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
-        if (first_click_)
+        if (first_mouse_click_)
         {
             glfwSetCursorPos(window, width_ / 2.0, height_ / 2.0);
-            first_click_ = false;
+            first_mouse_click_ = false;
         }
 
         double mouse_x, mouse_y;
@@ -91,7 +94,6 @@ void VEng::Graphics::Camera::HandleInput(GLFWwindow* window, const double delta_
             glm::normalize(glm::cross(orientation_, up_))
         );
 
-        // Prevent camera from flipping upside down
         if (abs(glm::angle(new_orientation, up_) - glm::radians(90.0f)) <= glm::radians(85.0f))
         {
             orientation_ = new_orientation;
@@ -103,21 +105,21 @@ void VEng::Graphics::Camera::HandleInput(GLFWwindow* window, const double delta_
     else
     {
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-        first_click_ = true;
+        first_mouse_click_ = true;
     }
 }
 
-glm::mat4 VEng::Graphics::Camera::GetViewMatrix() const
+glm::mat4 VEng::Graphics::Camera::GetViewMatrix() const noexcept
 {
     return glm::lookAt(position_, position_ + orientation_, up_);
 }
 
-glm::mat4 VEng::Graphics::Camera::GetViewMatrixNoTranslation() const
+glm::mat4 VEng::Graphics::Camera::GetViewMatrixNoTranslation() const noexcept
 {
     return glm::mat3(glm::lookAt(position_, position_ + orientation_, up_));
 }
 
-glm::mat4 VEng::Graphics::Camera::GetProjectionMatrix() const
+glm::mat4 VEng::Graphics::Camera::GetProjectionMatrix() const noexcept
 {
-    return glm::perspective(glm::radians(fov_), static_cast<float>(width_) / height_, 0.1f, 1000.0f);
+    return glm::perspective(glm::radians(fov_), static_cast<float>(width_) / static_cast<float>(height_), 0.1f, 1000.0f);
 }

@@ -1,12 +1,12 @@
-#include "gui_manager.h"
+#include "panel_manager.hpp"
 
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 
-#include "igui_panel.h"
+#include "igui_panel.hpp"
 
-VEng::GUI::Manager::Manager(GLFWwindow* window)
+VEng::GUI::PanelManager::PanelManager(GLFWwindow* window)
 {
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
@@ -18,14 +18,19 @@ VEng::GUI::Manager::Manager(GLFWwindow* window)
     ImGui_ImplOpenGL3_Init("#version 330");
 }
 
-VEng::GUI::Manager::~Manager()
+VEng::GUI::PanelManager::~PanelManager()
 {
+    for (const auto& panel : panels_)
+    {
+        delete panel;
+    }
+
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
 }
 
-void VEng::GUI::Manager::Update(const std::vector<PanelData>& panel_data)
+void VEng::GUI::PanelManager::Update(const std::vector<PanelData>& panel_data)
 {
     if (panel_data.size() != panels_.size())
     {
@@ -38,7 +43,7 @@ void VEng::GUI::Manager::Update(const std::vector<PanelData>& panel_data)
     }
 }
 
-void VEng::GUI::Manager::Draw() const
+void VEng::GUI::PanelManager::Draw(const Graphics::RenderContext& context) const
 {
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
@@ -53,7 +58,7 @@ void VEng::GUI::Manager::Draw() const
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
 
-void VEng::GUI::Manager::AddPanel(std::unique_ptr<IGUIPanel> panel)
+void VEng::GUI::PanelManager::AddPanel(IGUIPanel* panel)
 {
-    panels_.push_back(std::move(panel));
+    panels_.push_back(panel);
 }

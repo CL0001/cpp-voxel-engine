@@ -1,9 +1,9 @@
 #pragma once
 
-#include "core/window/window.h"
-#include "graphics/camera/camera.h"
-#include "graphics/renderer/renderer.h"
-#include "gui/gui_manager.h"
+#include "core/window/window.hpp"
+#include "graphics/camera/camera.hpp"
+#include "graphics/renderer/renderer.hpp"
+#include "gui/panel_manager.hpp"
 #include "world/chunk_manager.h"
 
 namespace VEng
@@ -20,6 +20,6 @@ namespace VEng
         Graphics::Camera camera_;
         Graphics::Renderer renderer_;
         World::ChunkManager chunk_manager_;
-        GUI::Manager gui_manager_;
+        GUI::PanelManager gui_manager_;
     };
 }

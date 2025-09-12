@@ -1,9 +1,9 @@
 add_library(engine-graphics STATIC
-        camera/camera.cpp camera/camera.h
-        renderer/renderer.cpp renderer/renderer.h
-        shader/shader.cpp shader/shader.h
-        skybox/skybox.cpp skybox/skybox.h
-        texture_atlas/texture_atlas.cpp texture_atlas/texture_atlas.h
+        camera/camera.cpp camera/camera.hpp
+        renderer/renderer.cpp renderer/renderer.hpp
+        shader/shader.cpp shader/shader.hpp
+        skybox/skybox.cpp skybox/skybox.hpp
+        texture_atlas/texture_atlas.cpp texture_atlas/texture_atlas.hpp
 )
 
 target_include_directories(engine-graphics PUBLIC

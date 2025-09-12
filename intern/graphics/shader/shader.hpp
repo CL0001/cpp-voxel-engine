@@ -1,23 +1,25 @@
 #pragma once
 
+#include <filesystem>
 #include <string>
 
 #include "glad/glad.h"
-#include "glm/matrix.hpp"
+#include "glm/glm.hpp"
 
 namespace VEng::Graphics
 {
 	class Shader
 	{
 	public:
-		Shader(const std::string& vertex_shader_path, const std::string& fragment_shader_path);
-		~Shader();
+		Shader(const std::filesystem::path& vertex_shader_path,
+			   const std::filesystem::path& fragment_shader_path);
+		~Shader() noexcept;
 
-		void Use() const;
+		void Use() const noexcept;
 
-		void SetUniform(const std::string& name, const glm::mat4& matrix) const;
+		void SetUniform(const std::string& name, const glm::mat4& matrix) const noexcept;
 
-		unsigned int GetProgramId() const;
+		[[nodiscard]] unsigned int GetProgramId() const noexcept;
 
 	private:
 		static std::string LoadShaderSource(const std::string& shader_path);

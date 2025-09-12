@@ -1,5 +1,5 @@
 add_library(engine STATIC
-        engine.cpp engine.h
+        engine.cpp engine.hpp
 )
 
 target_include_directories(engine PUBLIC

@@ -1,4 +1,4 @@
-#include "shader.h"
+#include "shader.hpp"
 
 #include <fstream>
 #include <sstream>
@@ -7,10 +7,11 @@
 #include "glad/glad.h"
 #include "spdlog/spdlog.h"
 
-VEng::Graphics::Shader::Shader(const std::string& vertex_shader_path, const std::string& fragment_shader_path)
+VEng::Graphics::Shader::Shader(const std::filesystem::path& vertex_shader_path,
+                               const std::filesystem::path& fragment_shader_path)
 {
-    const std::string vertex_shader_source = LoadShaderSource(vertex_shader_path);
-    const std::string fragment_shader_source = LoadShaderSource(fragment_shader_path);
+    const std::string vertex_shader_source = LoadShaderSource(vertex_shader_path.string());
+    const std::string fragment_shader_source = LoadShaderSource(fragment_shader_path.string());
 
     const unsigned int vertex_shader_id = CompileShader(GL_VERTEX_SHADER, vertex_shader_source);
     const unsigned int fragment_shader_id = CompileShader(GL_FRAGMENT_SHADER, fragment_shader_source);
@@ -18,17 +19,17 @@ VEng::Graphics::Shader::Shader(const std::string& vertex_shader_path, const std:
     program_id_ = CreateShaderProgram(vertex_shader_id, fragment_shader_id);
 }
 
-VEng::Graphics::Shader::~Shader()
+VEng::Graphics::Shader::~Shader() noexcept
 {
     glDeleteProgram(program_id_);
 }
 
-void VEng::Graphics::Shader::Use() const
+void VEng::Graphics::Shader::Use() const noexcept
 {
     glUseProgram(program_id_);
 }
 
-void VEng::Graphics::Shader::SetUniform(const std::string& name, const glm::mat4& matrix) const
+void VEng::Graphics::Shader::SetUniform(const std::string& name, const glm::mat4& matrix) const noexcept
 {
     const int location = glGetUniformLocation(program_id_, name.c_str());
 
@@ -41,7 +42,7 @@ void VEng::Graphics::Shader::SetUniform(const std::string& name, const glm::mat4
     glUniformMatrix4fv(location, 1, GL_FALSE, &matrix[0][0]);
 }
 
-unsigned int VEng::Graphics::Shader::GetProgramId() const
+unsigned int VEng::Graphics::Shader::GetProgramId() const noexcept
 {
     return program_id_;
 }

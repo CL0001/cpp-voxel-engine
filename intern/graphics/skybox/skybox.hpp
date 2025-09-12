@@ -1,27 +1,32 @@
 #pragma once
 
 #include <array>
-#include <string>
+#include <filesystem>
 
-#include "graphics/camera/camera.h"
-#include "graphics/shader/shader.h"
+#include "graphics/camera/camera.hpp"
+#include "graphics/shader/shader.hpp"
 
 namespace VEng::Graphics
 {
+    struct SkyboxSettings
+    {
+        std::filesystem::path vertex_shader_path;
+        std::filesystem::path fragment_shader_path;
+        int texture_unit;
+        std::array<std::filesystem::path, 6> cubemap_face_paths;
+    };
+
     class Skybox
     {
     public:
-        Skybox(const std::string& vertex_shader_path,
-               const std::string& fragment_shader_path,
-               unsigned int texture_unit,
-               const std::array<std::string, 6>& faces);
-        ~Skybox();
+        explicit Skybox(const SkyboxSettings& settings);
+        ~Skybox() noexcept;
 
-        void Draw(const VEng::Graphics::Camera& camera) const;
+        void Draw(const Camera& camera) const noexcept;
 
     private:
         Shader shader_;
-        unsigned int texture_unit_;
+        int texture_unit_;
 
         unsigned int vao_;
         unsigned int vbo_;
@@ -43,24 +48,12 @@ namespace VEng::Graphics
 
         static constexpr unsigned int indices_[] =
         {
-            // Right
-            1, 2, 6,
-            6, 5, 1,
-            // Left
-            0, 4, 7,
-            7, 3, 0,
-            // Top
-            4, 5, 6,
-            6, 7, 4,
-            // Bottom
-            0, 3, 2,
-            2, 1, 0,
-            // Back
-            0, 1, 5,
-            5, 4, 0,
-            // Front
-            3, 7, 6,
-            6, 2, 3
+            1, 2, 6, 6, 5, 1,  // Right
+            0, 4, 7, 7, 3, 0,  // Left
+            4, 5, 6, 6, 7, 4,  // Top
+            0, 3, 2, 2, 1, 0,  // Bottom
+            0, 1, 5, 5, 4, 0,  // Back
+            3, 7, 6, 6, 2, 3   // Front
         };
     };
 }

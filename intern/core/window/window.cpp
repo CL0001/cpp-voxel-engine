@@ -1,4 +1,4 @@
-#include "window.h"
+#include "window.hpp"
 
 #include "glad/glad.h"
 #include "glfw/glfw3.h"
@@ -15,6 +15,7 @@ VEng::Core::Window::Window(const int width, const int height, const char* title)
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
     window_ = glfwCreateWindow(width, height, title, nullptr, nullptr);
 
@@ -28,47 +29,45 @@ VEng::Core::Window::Window(const int width, const int height, const char* title)
     glfwSetFramebufferSizeCallback(window_, [](GLFWwindow* window, int w, int h)
     {
         glViewport(0, 0, w, h);
+
         spdlog::info("Framebuffer resized: {}x{}", w, h);
     });
 
     if (gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress)) == 0)
     {
-        glfwDestroyWindow(window_);
-        glfwTerminate();
         throw std::runtime_error("Failed to initialize GLAD");
     }
 
     spdlog::info("OpenGL loaded: {}.{}", GLVersion.major, GLVersion.minor);
 }
 
-VEng::Core::Window::~Window()
+VEng::Core::Window::~Window() noexcept
 {
     glfwDestroyWindow(window_);
     glfwTerminate();
 }
 
-GLFWwindow* VEng::Core::Window::GetHandle() const
+GLFWwindow* VEng::Core::Window::GetHandle() const noexcept
 {
     return window_;
 }
 
-bool VEng::Core::Window::ShouldClose() const
+bool VEng::Core::Window::ShouldClose() const noexcept
 {
     return glfwWindowShouldClose(window_);
 }
 
-void VEng::Core::Window::SwapBuffers() const
+void VEng::Core::Window::SwapBuffers() const noexcept
 {
     glfwSwapBuffers(window_);
 }
 
-void VEng::Core::Window::PollEvents() const
+void VEng::Core::Window::PollEvents() const noexcept
 {
     glfwPollEvents();
 }
 
-void VEng::Core::Window::SetFramebufferSizeCallback(const GLFWframebuffersizefun callback)
+void VEng::Core::Window::SetFramebufferSizeCallback(const GLFWframebuffersizefun callback) noexcept
 {
     glfwSetFramebufferSizeCallback(glfwGetCurrentContext(), callback);
 }
-

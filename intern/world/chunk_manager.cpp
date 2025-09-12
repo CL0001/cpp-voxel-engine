@@ -3,7 +3,9 @@
 #include "glad/glad.h"
 #include "glm/vec3.hpp"
 
-static inline int floordiv(int a, int b)
+#include "graphics/camera/camera.hpp"
+
+static inline int floordiv(const int a, const int b)
 {
     return (a >= 0) ? (a / b) : -(( -a + b - 1) / b);
 }
@@ -22,7 +24,7 @@ VEng::World::ChunkManager::ChunkManager(const std::string& vertex_shader_path,
       scale_(scale)
 {
     shader_.Use();
-    glUniform1i(glGetUniformLocation(shader_.GetProgramId(), "skybox"), 0);
+    glUniform1i(glGetUniformLocation(shader_.GetProgramId(), "atlas"), 0);
     atlas_.Use();
 
     chunks_.reserve(world_width_chunks_ * world_depth_chunks_);
@@ -47,12 +49,12 @@ VEng::World::ChunkManager::ChunkManager(const std::string& vertex_shader_path,
     }
 }
 
-void VEng::World::ChunkManager::Draw(const Graphics::Camera& camera) const
+void VEng::World::ChunkManager::Draw(const Graphics::RenderContext& context) const
 {
     shader_.Use();
     atlas_.Use();
 
-    camera.UploadViewProjectionMatrix(shader_.GetProgramId(), "camera_matrix");
+    context.camera.UploadViewProjectionMatrix(shader_.GetProgramId(), "camera_matrix");
 
     for (const auto& chunk : chunks_)
     {

@@ -8,8 +8,8 @@
 #include "glm/vec3.hpp"
 #include "glm/gtc/noise.hpp"
 
-#include "graphics/texture_atlas/texture_atlas.h"
-#include "graphics/camera/camera.h"
+#include "graphics/texture_atlas/texture_atlas.hpp"
+#include "graphics/camera/camera.hpp"
 #include "world/chunk_manager.h"
 
 struct UnitCube

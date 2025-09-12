@@ -1,16 +1,13 @@
-#include "skybox.h"
+#include "skybox.hpp"
 
 #include <stdexcept>
 
 #include "glad/glad.h"
 #include "stb_image.h"
 
-VEng::Graphics::Skybox::Skybox(const std::string& vertex_shader_path,
-               const std::string& fragment_shader_path,
-               const unsigned int texture_unit,
-               const std::array<std::string, 6>& faces)
-    : shader_(vertex_shader_path, fragment_shader_path),
-      texture_unit_(texture_unit)
+VEng::Graphics::Skybox::Skybox(const SkyboxSettings& settings)
+    : shader_(settings.vertex_shader_path, settings.fragment_shader_path),
+      texture_unit_(settings.texture_unit)
 {
     glGenVertexArrays(1, &vao_);
     glGenBuffers(1, &vbo_);
@@ -47,14 +44,14 @@ VEng::Graphics::Skybox::Skybox(const std::string& vertex_shader_path,
     {
         int width, height, nr_channels;
 
-        if (unsigned char* data = stbi_load(faces[i].c_str(), &width, &height, &nr_channels, 0))
+        if (unsigned char* data = stbi_load(settings.cubemap_face_paths[i].string().c_str(), &width, &height, &nr_channels, 0))
         {
             glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
             stbi_image_free(data);
         }
         else
         {
-            throw std::runtime_error("Failed to load texture from file " + faces[i]);
+            throw std::runtime_error("Failed to load texture from file " + settings.cubemap_face_paths[i].string());
         }
     }
 
@@ -70,7 +67,7 @@ VEng::Graphics::Skybox::~Skybox()
     glDeleteTextures(1, &cubemap_texture_);
 }
 
-void VEng::Graphics::Skybox::Draw(const VEng::Graphics::Camera& camera) const
+void VEng::Graphics::Skybox::Draw(const Camera& camera) const noexcept
 {
     glDisable(GL_CULL_FACE);
     glDepthMask(GL_FALSE);

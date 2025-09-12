@@ -1,7 +1,7 @@
 add_library(engine-gui STATIC
-        gui_manager.cpp gui_manager.h
-        controls_panel.cpp controls_panel.h
-        stats_panel.cpp stats_panel.h
+        panel_manager.cpp panel_manager.hpp
+        controls_panel.cpp controls_panel.hpp
+        stats_panel.cpp stats_panel.hpp
 )
 
 target_include_directories(engine-gui PUBLIC
@@ -11,4 +11,5 @@ target_include_directories(engine-gui PUBLIC
 target_link_libraries(engine-gui PUBLIC
         glfw
         imgui
+        engine-graphics
 )

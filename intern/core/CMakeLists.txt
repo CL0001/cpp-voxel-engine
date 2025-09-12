@@ -1,6 +1,6 @@
 add_library(engine-core STATIC
-        clock/clock.cpp clock/clock.h
-        window/window.cpp window/window.h
+        clock/clock.cpp clock/clock.hpp
+        window/window.cpp window/window.hpp
 )
 
 target_include_directories(engine-core PUBLIC

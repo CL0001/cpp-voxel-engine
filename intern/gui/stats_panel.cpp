@@ -1,4 +1,4 @@
-#include "stats_panel.h"
+#include "stats_panel.hpp"
 
 #include "imgui.h"
 
