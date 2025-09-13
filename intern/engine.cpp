@@ -6,8 +6,13 @@
 #include "gui/stats_panel.hpp"
 #include "gui/controls_panel.hpp"
 
-VEng::Engine::Engine(const int width, const int height, const char* title)
-    : window_(width, height, title),
+VEng::Engine::Engine(const int width, const int height, const std::string_view title)
+    : window_(Core::WindowSettings{
+                .width = width,
+                .height = height,
+                .title = title,
+                .enable_vsync = false
+            }),
       camera_(Graphics::CameraSettings{
                 .position = glm::vec3(0.0f, 150.0f, 0.0f),
                 .orientation = glm::vec3(0.0f, 0.0f, -1.0f),
@@ -19,21 +24,38 @@ VEng::Engine::Engine(const int width, const int height, const char* title)
                 .accelerated_speed = 20.0f,
                 .sensitivity = 50.0f
             }),
-      chunk_manager_(ASSETS_PATH "shaders/base.vert",
-                     ASSETS_PATH "shaders/base.frag",
-                     ASSETS_PATH "textures/blocks/terrain.png",
-                     ASSETS_PATH "textures/blocks/terrain_texture_uv.json",
-                     ASSETS_PATH "textures/blocks/terrain_block_map.json",
-                     16,
-                     1,
-                     128),
+      skybox_(Graphics::SkyboxSettings{
+                .vertex_shader_path = ASSETS_PATH "shaders/skybox.vert",
+                .fragment_shader_path = ASSETS_PATH "shaders/skybox.frag",
+                .texture_unit = 1,
+                .cubemap_face_paths = {
+                    ASSETS_PATH "cubemaps/day/px.jpg",
+                    ASSETS_PATH "cubemaps/day/nx.jpg",
+                    ASSETS_PATH "cubemaps/day/py.jpg",
+                    ASSETS_PATH "cubemaps/day/ny.jpg",
+                    ASSETS_PATH "cubemaps/day/pz.jpg",
+                    ASSETS_PATH "cubemaps/day/nz.jpg"
+                }
+            }),
+      chunk_manager_(World::ChunkManagerSettings{
+                .vertex_shader_path = ASSETS_PATH "shaders/base.vert",
+                .fragment_shader_path = ASSETS_PATH "shaders/base.frag",
+                .texture_unit = 0,
+                .texture_atlas_path = ASSETS_PATH "textures/blocks/terrain.png",
+                .atlas_uv_map_path = ASSETS_PATH "textures/blocks/terrain_texture_uv.json",
+                .atlas_block_map_path = ASSETS_PATH "textures/blocks/terrain_block_map.json",
+                .tile_size = 16,
+                .seed = 1,
+                .scale = 128
+            }),
       gui_manager_(window_.GetHandle())
 {
-    gui_manager_.AddPanel(new GUI::StatsPanel());
-    gui_manager_.AddPanel(new GUI::ControlsPanel());
+    gui_manager_.AddPanel(GUI::StatsPanel{});
+    gui_manager_.AddPanel(GUI::ControlsPanel{});
 
-    renderer_.AddRenderable(std::make_shared<World::ChunkManager>(chunk_manager_));
-    renderer_.AddRenderable(std::make_shared<GUI::PanelManager>(gui_manager_));
+    renderer_.AddRenderable(skybox_);
+    renderer_.AddRenderable(chunk_manager_);
+    renderer_.AddRenderable(gui_manager_);
 }
 
 void VEng::Engine::Run()
@@ -43,7 +65,7 @@ void VEng::Engine::Run()
         Core::Clock::Instance().Update();
 
         std::vector<GUI::PanelData> data;
-        data.emplace_back(GUI::StatsData{1 / Core::Clock::Instance().GetDeltaTime(), 512.0f});
+        data.emplace_back(GUI::StatsData{Core::Clock::Instance().GetFrameRate(), 512.0f});
         data.emplace_back(GUI::ControlsData{
             glfwGetKey(window_.GetHandle(), GLFW_KEY_W) == GLFW_PRESS,
             glfwGetKey(window_.GetHandle(), GLFW_KEY_S) == GLFW_PRESS,

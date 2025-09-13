@@ -3,7 +3,7 @@
 #include <array>
 #include <filesystem>
 
-#include "graphics/camera/camera.hpp"
+#include "graphics/renderer/renderer.hpp"
 #include "graphics/shader/shader.hpp"
 
 namespace VEng::Graphics
@@ -16,13 +16,13 @@ namespace VEng::Graphics
         std::array<std::filesystem::path, 6> cubemap_face_paths;
     };
 
-    class Skybox
+    class Skybox final : public IRenderable
     {
     public:
         explicit Skybox(const SkyboxSettings& settings);
-        ~Skybox() noexcept;
+        ~Skybox() noexcept override;
 
-        void Draw(const Camera& camera) const noexcept;
+        void Draw(const RenderContext& context) const noexcept override;
 
     private:
         Shader shader_;

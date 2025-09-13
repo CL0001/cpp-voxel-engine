@@ -1,14 +1,24 @@
 #pragma once
 
+#include <string_view>
+
 #include "glad/glad.h"
 #include "glfw/glfw3.h"
 
 namespace VEng::Core
 {
+    struct WindowSettings
+    {
+        int width;
+        int height;
+        std::string_view title;
+        bool enable_vsync;
+    };
+
     class Window
     {
     public:
-        Window(int width, int height, const char* title);
+        explicit Window(const WindowSettings& settings);
         ~Window() noexcept;
 
         [[nodiscard]] GLFWwindow* GetHandle() const noexcept;

@@ -2,6 +2,7 @@
 
 #include "glad/glad.h"
 #include "glm/vec3.hpp"
+#include "glm/ext/matrix_transform.hpp"
 
 #include "graphics/camera/camera.hpp"
 
@@ -10,21 +11,14 @@ static inline int floordiv(const int a, const int b)
     return (a >= 0) ? (a / b) : -(( -a + b - 1) / b);
 }
 
-VEng::World::ChunkManager::ChunkManager(const std::string& vertex_shader_path,
-             const std::string& fragment_shader_path,
-             const std::string& texture_path,
-             const std::string& texture_uv_path,
-             const std::string& texture_block_map_path,
-             const int tile_size,
-             const int seed,
-             const float scale)
-    : shader_(vertex_shader_path, fragment_shader_path),
-      atlas_(texture_path, texture_uv_path, texture_block_map_path, tile_size, 0),
-      seed_(seed),
-      scale_(scale)
+VEng::World::ChunkManager::ChunkManager(const ChunkManagerSettings& settings)
+    : shader_(settings.vertex_shader_path, settings.fragment_shader_path),
+      atlas_(settings.texture_atlas_path, settings.atlas_uv_map_path, settings.atlas_block_map_path, settings.tile_size, settings.texture_unit),
+      seed_(settings.seed),
+      scale_(settings.scale)
 {
     shader_.Use();
-    glUniform1i(glGetUniformLocation(shader_.GetProgramId(), "atlas"), 0);
+    glUniform1i(glGetUniformLocation(shader_.GetProgramId(), "atlas"), settings.texture_unit);
     atlas_.Use();
 
     chunks_.reserve(world_width_chunks_ * world_depth_chunks_);

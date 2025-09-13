@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <memory>
 
 #include "glfw/glfw3.h"
 
@@ -18,9 +19,13 @@ namespace VEng::GUI
         void Update(const std::vector<PanelData>& panel_data);
         void Draw(const Graphics::RenderContext& context) const override;
 
-        void AddPanel(IGUIPanel* panel);
+        template <typename PanelType>
+        void AddPanel(PanelType panel) noexcept
+        {
+            panels_.emplace_back(std::make_unique<PanelType>(std::move(panel)));
+        }
 
     private:
-        std::vector<IGUIPanel*> panels_;
+        std::vector<std::unique_ptr<IGUIPanel>> panels_;
     };
 }

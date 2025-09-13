@@ -4,7 +4,7 @@
 #include "glfw/glfw3.h"
 #include "spdlog/spdlog.h"
 
-VEng::Core::Window::Window(const int width, const int height, const char* title)
+VEng::Core::Window::Window(const WindowSettings& settings)
     : window_(nullptr)
 {
     if (glfwInit() == 0)
@@ -17,7 +17,7 @@ VEng::Core::Window::Window(const int width, const int height, const char* title)
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
-    window_ = glfwCreateWindow(width, height, title, nullptr, nullptr);
+    window_ = glfwCreateWindow(settings.width, settings.height, settings.title.data(), nullptr, nullptr);
 
     if (window_ == nullptr)
     {
@@ -25,7 +25,16 @@ VEng::Core::Window::Window(const int width, const int height, const char* title)
     }
 
     glfwMakeContextCurrent(window_);
-    glfwSwapInterval(0);
+
+    if (settings.enable_vsync)
+    {
+        glfwSwapInterval(1);
+    }
+    else
+    {
+        glfwSwapInterval(0);
+    }
+
     glfwSetFramebufferSizeCallback(window_, [](GLFWwindow* window, int w, int h)
     {
         glViewport(0, 0, w, h);

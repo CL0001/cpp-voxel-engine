@@ -5,6 +5,8 @@
 #include "glad/glad.h"
 #include "stb_image.h"
 
+#include "graphics/camera/camera.hpp"
+
 VEng::Graphics::Skybox::Skybox(const SkyboxSettings& settings)
     : shader_(settings.vertex_shader_path, settings.fragment_shader_path),
       texture_unit_(settings.texture_unit)
@@ -67,15 +69,15 @@ VEng::Graphics::Skybox::~Skybox()
     glDeleteTextures(1, &cubemap_texture_);
 }
 
-void VEng::Graphics::Skybox::Draw(const Camera& camera) const noexcept
+void VEng::Graphics::Skybox::Draw(const RenderContext& context) const noexcept
 {
     glDisable(GL_CULL_FACE);
     glDepthMask(GL_FALSE);
     glDepthFunc(GL_LEQUAL);
 
     shader_.Use();
-    shader_.SetUniform("view", camera.GetViewMatrixNoTranslation());
-    shader_.SetUniform("projection", camera.GetProjectionMatrix());
+    shader_.SetUniform("view", context.camera.GetViewMatrixNoTranslation());
+    shader_.SetUniform("projection", context.camera.GetProjectionMatrix());
 
     glBindVertexArray(vao_);
     glActiveTexture(GL_TEXTURE0 + texture_unit_);

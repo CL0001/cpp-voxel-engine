@@ -1,6 +1,5 @@
 #pragma once
 
-#include <string>
 #include <vector>
 
 #include "graphics/shader/shader.hpp"
@@ -11,17 +10,24 @@
 
 namespace VEng::World
 {
+    struct ChunkManagerSettings
+    {
+        std::filesystem::path vertex_shader_path;
+        std::filesystem::path fragment_shader_path;
+        int texture_unit;
+        std::filesystem::path texture_atlas_path;
+        std::filesystem::path atlas_uv_map_path;
+        std::filesystem::path atlas_block_map_path;
+        int tile_size;
+        int seed;
+        float scale;
+        int render_distance;
+    };
+
     class ChunkManager final : public Graphics::IRenderable
     {
     public:
-        ChunkManager(const std::string& vertex_shader_path,
-                     const std::string& fragment_shader_path,
-                     const std::string& texture_path,
-                     const std::string& texture_uv_path,
-                     const std::string& texture_block_map_path,
-                     int tile_size,
-                     int seed,
-                     float scale);
+        ChunkManager(const ChunkManagerSettings& settings);
 
         void Draw(const Graphics::RenderContext& context) const override;
 

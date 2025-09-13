@@ -1,26 +1,26 @@
 #include "texture_atlas.hpp"
 
 #include <iostream>
-#include <stdexcept>
 #include <fstream>
+#include <stdexcept>
 
 #include "glad/glad.h"
 #include "json.hpp"
 
 #include "stb_image.h"
 
-VEng::Graphics::TextureAtlas::TextureAtlas(const std::string& texture_path,
-                           const std::string& texture_uv_path,
-                           const std::string& texture_block_map_path,
-                           const int tile_size,
-                           const unsigned int texture_unit)
+VEng::Graphics::TextureAtlas::TextureAtlas(const std::filesystem::path& texture_path,
+                                           const std::filesystem::path& texture_uv_path,
+                                           const std::filesystem::path& texture_block_map_path,
+                                           int tile_size,
+                                           int texture_unit)
     : texture_unit_(texture_unit), tile_size_(tile_size)
 {
     int nr_channels;
 
     stbi_set_flip_vertically_on_load(true);
 
-    if (unsigned char* data = stbi_load(texture_path.c_str(), &width_, &height_, &nr_channels, 4))
+    if (unsigned char* data = stbi_load(texture_path.string().c_str(), &width_, &height_, &nr_channels, 4))
     {
         glGenTextures(1, &texture_id_);
         glBindTexture(GL_TEXTURE_2D, texture_id_);
@@ -37,13 +37,13 @@ VEng::Graphics::TextureAtlas::TextureAtlas(const std::string& texture_path,
     }
     else
     {
-        throw std::runtime_error("Failed to load texture atlas: " + texture_path);
+        throw std::runtime_error("Failed to load texture atlas: " + texture_path.string());
     }
 
     std::ifstream uv_file(texture_uv_path);
     if (!uv_file.is_open())
     {
-        throw std::runtime_error("Failed to open UV JSON: " + texture_uv_path);
+        throw std::runtime_error("Failed to open UV JSON: " + texture_uv_path.string());
     }
 
     nlohmann::json uv_json;
@@ -67,7 +67,7 @@ VEng::Graphics::TextureAtlas::TextureAtlas(const std::string& texture_path,
 
     std::ifstream block_file(texture_block_map_path);
     if (!block_file.is_open())
-        throw std::runtime_error("Failed to open block map JSON: " + texture_block_map_path);
+        throw std::runtime_error("Failed to open block map JSON: " + texture_block_map_path.string());
 
     nlohmann::json block_json;
     block_file >> block_json;

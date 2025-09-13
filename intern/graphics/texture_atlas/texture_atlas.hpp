@@ -1,5 +1,6 @@
 #pragma once
 
+#include <filesystem>
 #include <string>
 #include <unordered_map>
 
@@ -24,11 +25,11 @@ namespace VEng::Graphics
     class TextureAtlas
     {
     public:
-        TextureAtlas(const std::string& texture_path,
-                     const std::string& texture_uv_path,
-                     const std::string& texture_block_map_path,
+        TextureAtlas(const std::filesystem::path& texture_path,
+                     const std::filesystem::path& texture_uv_path,
+                     const std::filesystem::path& texture_block_map_path,
                      int tile_size,
-                     unsigned int texture_unit);
+                     int texture_unit);
 
         ~TextureAtlas();
 
@@ -39,7 +40,7 @@ namespace VEng::Graphics
 
     private:
         unsigned int texture_id_;
-        unsigned int texture_unit_;
+        int texture_unit_;
         int width_;
         int height_;
         int tile_size_;

@@ -20,11 +20,6 @@ VEng::GUI::PanelManager::PanelManager(GLFWwindow* window)
 
 VEng::GUI::PanelManager::~PanelManager()
 {
-    for (const auto& panel : panels_)
-    {
-        delete panel;
-    }
-
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
@@ -56,9 +51,4 @@ void VEng::GUI::PanelManager::Draw(const Graphics::RenderContext& context) const
 
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-}
-
-void VEng::GUI::PanelManager::AddPanel(IGUIPanel* panel)
-{
-    panels_.push_back(panel);
 }

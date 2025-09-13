@@ -2,8 +2,6 @@
 
 #include "glad/glad.h"
 
-#include "graphics/skybox/skybox.hpp"
-
 VEng::Graphics::Renderer::Renderer()
 {
     glEnable(GL_DEPTH_TEST);
@@ -12,33 +10,18 @@ VEng::Graphics::Renderer::Renderer()
     glFrontFace(GL_CCW);
 }
 
-void VEng::Graphics::Renderer::AddRenderable(const std::shared_ptr<IRenderable>& renderable) noexcept
+void VEng::Graphics::Renderer::AddRenderable(const IRenderable& renderable)
 {
-    renderables_.push_back(renderable);
+    renderables_.push_back(std::cref(renderable));
 }
 
-void VEng::Graphics::Renderer::Render(const Camera& camera) const noexcept
+void VEng::Graphics::Renderer::Render(const Camera& camera) const
 {
     const RenderContext context{camera};
 
-    // const Skybox skybox_(SkyboxSettings{
-    //       .vertex_shader_path = ASSETS_PATH "shaders/skybox.vert",
-    //       .fragment_shader_path = ASSETS_PATH "shaders/skybox.frag",
-    //       .texture_unit = 1,
-    //       .cubemap_face_paths = {
-    //           ASSETS_PATH "cubemaps/day/px.jpg",
-    //           ASSETS_PATH "cubemaps/day/nx.jpg",
-    //           ASSETS_PATH "cubemaps/day/py.jpg",
-    //           ASSETS_PATH "cubemaps/day/ny.jpg",
-    //           ASSETS_PATH "cubemaps/day/pz.jpg",
-    //           ASSETS_PATH "cubemaps/day/nz.jpg"
-    //       }
-    //   });
-    // skybox_.Draw(camera);
-
     for (const auto& renderable : renderables_)
     {
-        renderable->Draw(context);
+        renderable.get().Draw(context);
     }
 }
 
