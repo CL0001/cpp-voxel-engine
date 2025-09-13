@@ -5,7 +5,7 @@
 #include "graphics/shader/shader.hpp"
 #include "graphics/texture_atlas/texture_atlas.hpp"
 
-#include "chunk.h"
+#include "chunk.hpp"
 #include "graphics/renderer/renderer.hpp"
 
 namespace VEng::World

@@ -1,4 +1,4 @@
-#include "chunk.h"
+#include "chunk.hpp"
 
 #include <algorithm>
 #include <cmath>
@@ -10,7 +10,7 @@
 
 #include "graphics/texture_atlas/texture_atlas.hpp"
 #include "graphics/camera/camera.hpp"
-#include "world/chunk_manager.h"
+#include "world/chunk_manager.hpp"
 
 struct UnitCube
 {

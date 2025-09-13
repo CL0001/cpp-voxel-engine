@@ -1,4 +1,4 @@
-#include "chunk_manager.h"
+#include "chunk_manager.hpp"
 
 #include "glad/glad.h"
 #include "glm/vec3.hpp"

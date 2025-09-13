@@ -1,6 +1,6 @@
 add_library(engine-world STATIC
-        chunk.cpp chunk.h
-        chunk_manager.cpp chunk_manager.h
+        chunk.cpp chunk.hpp
+        chunk_manager.cpp chunk_manager.hpp
 )
 
 target_include_directories(engine-world PUBLIC

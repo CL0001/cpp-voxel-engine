@@ -7,7 +7,7 @@
 #include "graphics/renderer/renderer.hpp"
 #include "graphics/skybox/skybox.hpp"
 #include "gui/panel_manager.hpp"
-#include "world/chunk_manager.h"
+#include "world/chunk_manager.hpp"
 
 namespace VEng
 {
