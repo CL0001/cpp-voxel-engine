@@ -44,12 +44,18 @@ python ./tools/build.py
 Without any flags, the script will simply build the project.
 The following optional flags can also be used:
 
-| Flag         | Description                                                             | Example                                     |
-| ------------ | ----------------------------------------------------------------------- | ------------------------------------------- |
-| `--build`    | Choose the build type. Options: `Debug` or `Release`. Default: `Debug`. | `python ./tools/build.py --build Release`   |
-| `--run`      | Run the binary after building.                                          | `python ./tools/build.py --run`             |
-| `--clean`    | Remove the build directory before building.                             | `python ./tools/build.py --clean`           |
-| `--generate` | Specify the CMake generator. Currently only supports `vs2022`.          | `python ./tools/build.py --generate vs2022` |
+| Flag         | Description                                                             |
+| ------------ | ----------------------------------------------------------------------- |
+| `--build`    | Choose the build type. Options: `Debug` or `Release`. Default: `Debug`. |
+| `--run`      | Run the binary directly after building.                                 |
+| `--clean`    | Remove the build directory before building.                             |
+| `--generate` | Specify the CMake generator. Currently only supports `vs2022`.          |
+
+Example:
+
+```
+python ./tools/build.py --run
+```
 
 If Python is not installed, you can build the project manually using CMake:
 
