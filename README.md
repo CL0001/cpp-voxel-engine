@@ -1,4 +1,4 @@
-<img width="1310" height="625" alt="veng_logo_v2" src="https://github.com/user-attachments/assets/65bdf8d8-41f6-4009-984e-e124280ed3e3" />
+<img width="1305" height="625" alt="veng_logo_v2" src="https://github.com/user-attachments/assets/76b9a2d4-7ba3-458a-876a-dcbb094697f3" />
 
 # About
 
