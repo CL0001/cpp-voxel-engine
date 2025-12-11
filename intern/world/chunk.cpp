@@ -173,9 +173,9 @@ void VEng::World::Chunk::Draw(const Graphics::Shader& shader) const
 }
 
 void VEng::World::Chunk::AddFace(const FaceContext& ctx,
-                    const Graphics::TextureAtlas& atlas,
-                    std::vector<Vertex>& vertices,
-                    std::vector<unsigned int>& indices)
+                                 const Graphics::TextureAtlas& atlas,
+                                 std::vector<Vertex>& vertices,
+                                 std::vector<unsigned int>& indices)
 {
     if (ctx.texture_name.empty()) return;
 
@@ -204,10 +204,10 @@ void VEng::World::Chunk::AddFace(const FaceContext& ctx,
 }
 
 void VEng::World::Chunk::AddBlockFaces(const glm::ivec3& coords,
-                          const Graphics::TextureAtlas& atlas,
-                          std::vector<Vertex>& vertices,
-                          std::vector<unsigned int>& indices,
-                          const ChunkManager& chunk_manager) const
+                                       const Graphics::TextureAtlas& atlas,
+                                       std::vector<Vertex>& vertices,
+                                       std::vector<unsigned int>& indices,
+                                       const ChunkManager& chunk_manager) const
 {
     const std::string& block_name = voxels_[Index(coords.x, coords.y, coords.z)];
 
@@ -219,8 +219,7 @@ void VEng::World::Chunk::AddBlockFaces(const glm::ivec3& coords,
     const glm::vec3 base = glm::vec3(origin_) + glm::vec3(coords);
     const Graphics::BlockDefinition* block_def = &atlas.GetBlockDefinition(block_name);
 
-    constexpr glm::vec3 defaultColor{1.0f};
-    constexpr glm::vec3 plainsGreen{0.35f, 1.0f, 0.35f};
+    constexpr glm::vec3 default_color{1.0f};
 
     const std::string& top_tex    = block_def->top_texture_name.empty()    ? "" : block_def->top_texture_name;
     const std::string& bottom_tex = block_def->bottom_texture_name.empty() ? "" : block_def->bottom_texture_name;
@@ -232,33 +231,32 @@ void VEng::World::Chunk::AddBlockFaces(const glm::ivec3& coords,
 
     if (!chunk_manager.IsSolid(gx + 1, gy, gz))
     {
-        AddFace({ base, UnitCube::FACE_RIGHT, side_tex, defaultColor }, atlas, vertices, indices);
+        AddFace({ base, UnitCube::FACE_RIGHT, side_tex, default_color }, atlas, vertices, indices);
     }
 
     if (!chunk_manager.IsSolid(gx - 1, gy, gz))
     {
-        AddFace({ base, UnitCube::FACE_LEFT, side_tex, defaultColor, true }, atlas, vertices, indices);
+        AddFace({ base, UnitCube::FACE_LEFT, side_tex, default_color, true }, atlas, vertices, indices);
     }
 
     if (!chunk_manager.IsSolid(gx, gy + 1, gz))
     {
-        glm::vec3 color = (block_name == "grass_block") ? plainsGreen : defaultColor;
-        AddFace({ base, UnitCube::FACE_TOP, top_tex, color }, atlas, vertices, indices);
+        AddFace({ base, UnitCube::FACE_TOP, top_tex, default_color }, atlas, vertices, indices);
     }
 
     if (!chunk_manager.IsSolid(gx, gy - 1, gz))
     {
-        AddFace({ base, UnitCube::FACE_BOTTOM, bottom_tex, defaultColor }, atlas, vertices, indices);
+        AddFace({ base, UnitCube::FACE_BOTTOM, bottom_tex, default_color }, atlas, vertices, indices);
     }
 
     if (!chunk_manager.IsSolid(gx, gy, gz + 1))
     {
-        AddFace({ base, UnitCube::FACE_FRONT, side_tex, defaultColor }, atlas, vertices, indices);
+        AddFace({ base, UnitCube::FACE_FRONT, side_tex, default_color }, atlas, vertices, indices);
     }
 
     if (!chunk_manager.IsSolid(gx, gy, gz - 1))
     {
-        AddFace({ base, UnitCube::FACE_BACK, side_tex, defaultColor, true }, atlas, vertices, indices);
+        AddFace({ base, UnitCube::FACE_BACK, side_tex, default_color, true }, atlas, vertices, indices);
     }
 }
 
