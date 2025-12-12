@@ -4,6 +4,7 @@
 
 VEng is a lightweight voxel engine built with **C++20** and **OpenGL3**, using minimal third-party libraries to create a playable, procedurally generated world.
 
+
 # Features
 
 - **Procedural World Generation:** Infinite terrain generated using custom layered simplex noise.  
@@ -11,9 +12,11 @@ VEng is a lightweight voxel engine built with **C++20** and **OpenGL3**, using m
 - **Efficient Memory Management:** Engine objects use stack-based lifetimes for efficiency.
 - **High-Performance Rendering:** Capable of handling large view distances at a stable ~1000 FPS.  
 
+
 # LTS Gameplay Demo
 
-https://github.com/user-attachments/assets/0bd28fd9-4836-4c9d-b9b3-f48fb4117b57
+https://github.com/user-attachments/assets/4e2f7ab4-2ee8-43cb-9a92-3b0964ca3a74
+
 
 # Getting Started
 
